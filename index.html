@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>歷史學習 App - 總部大廳</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a237e;
+            --secondary: #f57f17;
+            --bg: #f5f5f5;
+        }
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            color: var(--primary);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 25px;
+        }
+
+        /* 返回總目錄按鈕樣式 */
+        .home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #ff4081 0%, #d81b60 100%); /* 醒目的紅粉色漸層 */
+            color: white;
+            padding: 12px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 4px 15px rgba(216, 27, 96, 0.4);
+            transition: all 0.3s ease;
+            border: 2px solid white;
+        }
+        .home-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(216, 27, 96, 0.5);
+        }
+        
+        /* 網格佈局 */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        /* 卡片樣式 */
+        .app-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-decoration: none; /* 移除超連結底線 */
+            color: #333;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 5px solid var(--primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .card-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            background: #e8eaf6;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .card-desc {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: auto; /* 讓 badge 貼底 */
+        }
+
+        .card-badge {
+            margin-top: 15px;
+            padding: 5px 12px;
+            background: #fff3e0;
+            color: var(--secondary);
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        
+        .card-locked {
+            filter: grayscale(1);
+            opacity: 0.7;
+            cursor: not-allowed;
+            pointer-events: none; /* 禁止點擊 */
+            border-top-color: #999;
+        }
+        .card-locked .card-badge {
+            background: #eee;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>📜 歷史學習 App 總部</h1>
+        <p>請選擇您要進行的探險旅程</p>
+        
+        <!-- 新增：返回百寶箱按鈕 -->
+        <a href="https://nicktsai88.github.io/List/" class="home-btn">
+            🎁 返回快樂學習百寶箱
+        </a>
+    </div>
+
+    <div class="app-grid">
+        <!-- L1 -->
+        <a href="History4-L1.html" class="app-card">
+            <div class="card-icon">🇹🇼</div>
+            <div class="card-title">第4冊 L1<br>中華民國的早期發展</div>
+            <div class="card-desc">探索民國初期的政治紛擾與軍閥割據，見證共和的起點。</div>
+            <div class="card-badge">開放中</div>
+        </a>
+
+        <!-- L2 -->
+        <a href="History4-L2.html.html" class="app-card">
+            <div class="card-icon">📖</div>
+            <div class="card-title">第4冊 L2<br>舊傳統與新思潮</div>
+            <div class="card-desc">深入新文化運動與五四運動，體驗思想激盪的年代。</div>
+            <div class="card-badge">開放中</div>
+        </a>
+
+        <!-- L3 -->
+        <a href="History4-L3.html" class="app-card card-locked">
+            <div class="card-icon">🏗️</div>
+            <div class="card-title">第4冊 L3<br>現代國家的挑戰</div>
+            <div class="card-desc">黃金十年的建設成果，以及面臨內憂外患的艱鉅挑戰。</div>
+            <div class="card-badge">準備中</div>
+        </a>
+
+        <!-- L4 -->
+        <a href="History4-L4.html" class="app-card card-locked">
+            <div class="card-icon">⚔️</div>
+            <div class="card-title">第4冊 L4<br>中日戰爭與國共內戰</div>
+            <div class="card-desc">八年抗戰的血淚史，與戰後國共勢力的消長。</div>
+            <div class="card-badge">準備中</div>
+        </a>
+
+        <!-- L5 -->
+        <a href="History4-L5.html" class="app-card card-locked">
+            <div class="card-icon">🚩</div>
+            <div class="card-title">第4冊 L5<br>中華人民共和國<br>的建立與發展</div>
+            <div class="card-desc">從建政初期、大躍進、文革到改革開放的歷史變遷。</div>
+            <div class="card-badge">準備中</div>
+        </a>
+
+        <!-- L6 -->
+        <a href="History4-L6.html" class="app-card card-locked">
+            <div class="card-icon">🌏</div>
+            <div class="card-title">第4冊 L6<br>當代東亞與<br>東南亞的發展</div>
+            <div class="card-desc">探討戰後亞洲經濟起飛、區域整合與地緣政治。</div>
+            <div class="card-badge">準備中</div>
+        </a>
+    </div>
+
+</body>
+</html>

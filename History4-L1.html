@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>歷史第4冊：L1 中華民國的早期發展</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <!-- Firebase Import Map -->
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js",
+                "firebase/auth": "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js",
+                "firebase/firestore": "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js"
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            /* 配色系統 - 歷史主題 (中華民國早期發展 - 民國藍/復古風) */
+            --primary-color: #1a237e;   /* 民國藍 (深藍) */
+            --secondary-color: #f57f17; /* 歷史金 (深黃) */
+            --bg-color: #fafafa;        /* 紙張白 */
+            --text-color: #263238;      /* 墨黑 */
+            --accent-color: #b71c1c;    /* 官印紅 */
+            --correct-color: #2e7d32;   /* 正確綠 */
+            --wrong-color: #c62828;     /* 錯誤紅 */
+            --locked-color: #cfd8dc;    /* 封鎖灰 */
+            --favorite-color: #6a1b9a;  /* 典藏紫 */
+            --quick-mode-color: #006064; /* 速讀青 */
+            --quick-mode-bg: #e0f7fa;    /* 淺青背景 */
+            --player-bg: #ffffff;
+            --header-height: 80px;
+        }
+
+        body { 
+            font-family: 'Noto Sans TC', "Microsoft JhengHei", Arial, sans-serif; 
+            max-width: 1000px;
+            margin: 0 auto; 
+            padding: calc(var(--header-height) + 20px) 20px 20px 20px; 
+            background-color: var(--bg-color); 
+            color: var(--text-color);
+            background-image: 
+                linear-gradient(rgba(26, 35, 126, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(26, 35, 126, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3 { text-align: center; color: var(--text-color); }
+        h1 { color: var(--primary-color); text-shadow: 1px 1px 2px rgba(0,0,0,0.1); margin-top: 0;}
+
+        /* --- 音樂播放器固定列 (功能更新版) --- */
+        #music-player-bar {
+            position: fixed; top: 0; left: 0; width: 100%; height: var(--header-height);
+            background-color: var(--player-bg); border-bottom: 3px solid var(--primary-color);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            display: grid; /* 改為 Grid 佈局以實現絕對置中 */
+            grid-template-columns: 1fr auto 1fr; /* 左側彈性 | 中間自適應 | 右側彈性 */
+            align-items: center; 
+            padding: 0 20px; box-sizing: border-box;
+            z-index: 10000;
+        }
+
+        /* 左側群組 (圖示 + 跑馬燈) */
+        .player-left-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            overflow: hidden; /* 防止跑版 */
+            justify-content: flex-start;
+        }
+
+        /* 1. 旋轉圖示 */
+        .player-icon { 
+            flex-shrink: 0;
+            font-size: 1.5em; background: #e8eaf6; width: 45px; height: 45px; 
+            display: flex; align-items: center; justify-content: center; 
+            border-radius: 50%; border: 2px solid var(--primary-color); 
+            color: var(--primary-color);
+            animation: spin 10s linear infinite;
+            animation-play-state: paused;
+        }
+
+        /* 2. 跑馬燈 (彈性寬度) */
+        .marquee-container {
+            flex: 1; /* 佔據剩餘空間 */
+            max-width: 250px; /* 稍微縮小最大寬度以避免擠壓中間 */
+            background: #fff9c4; border-radius: 15px;
+            padding: 2px 10px; 
+            overflow: hidden; white-space: nowrap;
+            border: 1px solid #fbc02d;
+            position: relative;
+            margin: 0; 
+        }
+        .marquee-text {
+            display: inline-block;
+            font-size: 0.9em; color: var(--primary-color); font-weight: bold;
+            padding-left: 100%;
+            animation: marquee 25s linear infinite;
+        }
+
+        /* 3. 播放控制 (置中) */
+        .player-controls { 
+            display: flex; align-items: center; gap: 10px; flex-shrink: 0; 
+            justify-self: center; /* Grid 單元格內置中 */
+        }
+        .ctrl-btn { 
+            background: none; border: 2px solid transparent; border-radius: 50%;
+            cursor: pointer; color: #546e7a; font-size: 1.4em; 
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .ctrl-btn:hover { color: var(--primary-color); background: #c5cae9; }
+        .ctrl-btn:active { transform: scale(0.95); }
+        #play-pause-btn { 
+            color: var(--primary-color); font-size: 1.8em; 
+            border-color: var(--primary-color);
+            padding: 0; padding-left: 3px; 
+            box-sizing: border-box; line-height: 1;
+        }
+
+        /* 右側群組 (音量 + 狀態) */
+        .player-right-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+
+        /* 4. & 5. 靜音與音量 (群組) */
+        .volume-group { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+        .volume-slider { width: 80px; accent-color: var(--primary-color); cursor: pointer; height: 4px; }
+        #mute-btn { font-size: 1.2em; width: 35px; height: 35px; }
+
+        /* 6. 同步狀態燈號 (整合入 Bar) */
+        .status-indicator {
+            position: static; /* 移除 fixed */
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(0,0,0,0.03); padding: 5px 12px;
+            border-radius: 20px; 
+            font-size: 0.85em; color: #555;
+            border: 1px solid #ddd;
+            flex-shrink: 0;
+            margin-left: auto; /* 推到最右邊 (但在 flex 結構中視 justify 而定) */
+        }
+        .status-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background-color: #ccc; transition: background-color 0.3s;
+        }
+        .status-dot.loading { background-color: #ff9800; animation: pulse 1s infinite; }
+        .status-dot.success { background-color: #4caf50; }
+        .status-dot.error { background-color: #f44336; }
+
+        /* --- 容器通用 --- */
+        .container-box {
+            background: rgba(255, 255, 255, 0.96); padding: 25px; border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05);
+            backdrop-filter: blur(10px); position: relative; margin-bottom: 20px;
+        }
+
+        /* --- Welcome Screen --- */
+        #welcome-screen {
+            background: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)), url('History4-L1-images/history_bg.jpg');
+            background-size: cover; background-position: center; border-left: 6px solid var(--primary-color);
+        }
+        .avatar-selection { display: flex; justify-content: center; gap: 15px; margin: 20px 0; }
+        .avatar-option {
+            width: 80px; height: 80px; border-radius: 50%; border: 4px solid #fff; cursor: pointer;
+            transition: 0.3s; object-fit: cover; background: #FFF; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .avatar-option.selected { border-color: var(--primary-color); transform: scale(1.1); }
+        
+        /* 雲端登入列表優化 */
+        .quick-login-area { 
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 15px; 
+            max-height: 150px; overflow-y: auto; padding: 5px; /* 加上捲軸 */
+            border: 1px solid #eee; border-radius: 10px; background: rgba(255,255,255,0.6);
+        }
+        .user-tag { background: #fff; border: 1px solid #bdbdbd; padding: 6px 15px; border-radius: 20px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.95em; transition: 0.2s;}
+        .user-tag:hover { border-color: var(--primary-color); background: #e8eaf6; }
+        
+        .delete-user { font-weight: bold; padding: 2px 6px; border-radius: 50%; background: #eee; color: #888; }
+        .delete-user:hover { background: var(--wrong-color); color: #fff; }
+        input[type="text"] { padding: 12px; font-size: 1.2em; border: 2px solid #90a4ae; border-radius: 30px; width: 80%; text-align: center; margin: 10px 0;}
+
+        /* --- Dashboard (Level Screen) --- */
+        #level-screen-content {
+            display: flex; gap: 20px; align-items: stretch;
+            min-height: 400px;
+        }
+        #level-screen {
+            background: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)), url('History4-L1-images/history_bg.jpg');
+            background-size: cover; background-position: center;
+        }
+        .dashboard-std-zone {
+            flex: 2; border: 1px solid #cfd8dc; border-radius: 12px; padding: 20px;
+            background: rgba(255,255,255,0.9);
+        }
+        .dashboard-title { 
+            font-size: 1.4em; color: var(--primary-color); margin-bottom: 15px; 
+            display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #90a4ae; padding-bottom: 10px;
+        }
+        .level-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px; justify-items: center;
+        }
+        .level-grid-btn {
+            width: 100%; aspect-ratio: 1; min-height: 110px;
+            border-radius: 15px;
+            background: #fff; border: 3px solid var(--primary-color);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0 #546e7a; color: var(--text-color);
+            padding: 5px;
+        }
+        .level-grid-btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 6px 0 #546e7a; background: #e8eaf6; }
+        .level-grid-btn:active:not(:disabled) { transform: translateY(2px); box-shadow: none; }
+        .level-grid-btn:disabled { border-color: #cfd8dc; color: #b0bec5; background: #eceff1; cursor: not-allowed; box-shadow: none;}
+        
+        .lvl-icon { 
+            font-size: 3em; margin-bottom: 8px; 
+            font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Android Emoji", sans-serif;
+            line-height: 1.1;
+        }
+        .lvl-score { font-size: 0.85em; font-weight: bold; color: var(--correct-color); }
+        .lvl-label { font-size: 1.3em; font-weight: bold; font-family: "KaiTi", "BiauKai", serif;}
+        
+        .dashboard-speed-zone {
+            flex: 1; background: var(--quick-mode-bg); border-radius: 12px; padding: 20px;
+            border: 2px solid var(--quick-mode-color); display: flex; flex-direction: column; align-items: center;
+        }
+        .speed-title { color: var(--quick-mode-color); font-size: 1.4em; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;}
+        .speed-big-btn {
+            width: 100%; padding: 20px; border-radius: 15px; background: var(--quick-mode-color);
+            color: white; font-size: 1.3em; border: none; cursor: pointer; font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 96, 100, 0.3); transition: 0.3s; margin-top: auto; margin-bottom: auto;
+        }
+        .speed-big-btn:hover { transform: scale(1.05); background: #00838f; }
+
+        .dashboard-tools {
+            margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+            padding-top: 20px; border-top: 1px solid #ddd;
+        }
+        
+        /* --- Button Styles --- */
+        .btn { padding: 10px 24px; border-radius: 25px; border: none; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); color: #fff; background: var(--primary-color); display: inline-flex; align-items: center; gap: 5px;}
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 10px rgba(0,0,0,0.15); }
+        .btn-red { background: var(--wrong-color); } .btn-red:hover { background: #b71c1c; }
+        .btn-green { background: var(--correct-color); } .btn-green:hover { background: #1b5e20; }
+        .btn-pink { background: var(--favorite-color); } .btn-pink:hover { background: #4a148c; }
+        .btn-gray { background: #90a4ae; } .btn-gray:hover { background: #607d8b; }
+        .btn-blue { background: #0277bd; } .btn-blue:hover { background: #01579b; }
+        .btn-orange { background: var(--secondary-color); color: #fff;} .btn-orange:hover { background: #f57f17; }
+
+        /* --- Standard Quiz Mode (Single Question) --- */
+        .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .progress-bar-container { width: 100%; background: #e0e0e0; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 20px; }
+        .progress-bar-fill { height: 100%; background: var(--secondary-color); width: 0%; transition: width 0.3s; }
+        .question-box { background: #fff; padding: 20px; border-radius: 10px; border-left: 5px solid var(--primary-color); box-shadow: 0 2px 10px rgba(0,0,0,0.05); font-size: 1.5em; line-height: 1.5; margin-bottom: 20px; }
+        .option-list { list-style: none; padding: 0; }
+        .option-btn { width: 100%; padding: 15px; margin-bottom: 10px; background: #fff; border: 2px solid #e0e0e0; border-radius: 10px; cursor: pointer; font-size: 1.3em; text-align: left; transition: 0.2s; position: relative; }
+        .option-btn:hover { border-color: var(--primary-color); background: #e8eaf6; }
+        .option-btn.correct { background: #d4edda; border-color: var(--correct-color); color: #155724; }
+        .option-btn.wrong { background: #f8d7da; border-color: var(--wrong-color); color: #721c24; }
+        .explanation-box { 
+            background: #fff3e0; padding: 20px; border-radius: 8px; 
+            border: 1px solid #ffe0b2; border-left: 6px solid var(--secondary-color);
+            margin-top: 25px; display: none; line-height: 1.6; font-size: 1.3em; color: #37474f;
+        }
+
+        /* --- Waterfall Quiz Mode (Quick Quiz) --- */
+        #waterfall-screen { display: none; }
+        .waterfall-header {
+            position: sticky; top: var(--header-height); z-index: 99;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            padding: 15px 20px; border-radius: 0 0 15px 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin: -25px -25px 20px -25px;
+            border-bottom: 4px solid var(--quick-mode-color);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .waterfall-title { font-size: 1.2em; font-weight: bold; color: var(--quick-mode-color); display: flex; align-items: center; gap: 8px; }
+        .waterfall-stats { font-size: 1.1em; font-weight: bold; color: #555; }
+        
+        .waterfall-card {
+            background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05); border: 1px solid #eee; position: relative;
+        }
+        .waterfall-card.card-correct { background-color: #d4edda; border-color: var(--correct-color); }
+        .waterfall-card.card-wrong { background-color: #f8d7da; border-color: var(--wrong-color); }
+        .waterfall-card.locked { opacity: 0.9; }
+        .card-actions { position: absolute; top: 15px; right: 15px; display: flex; gap: 10px; }
+        .action-icon { cursor: pointer; font-size: 2.2em; transition: 0.2s; color: #bdc3c7; padding: 5px; }
+        .action-icon.active { color: var(--favorite-color); }
+        .action-icon.trash:hover { color: var(--wrong-color); }
+
+        .wf-question-text { 
+            font-size: 1.5em; font-weight: bold; margin-bottom: 15px; 
+            padding-right: 100px; line-height: 1.5; color: #263238; 
+        }
+        .wf-q-badge { display: inline-block; background: var(--secondary-color); color: white; padding: 3px 10px; border-radius: 4px; font-size: 0.9em; font-weight: bold; margin-right: 8px; vertical-align: middle; }
+        .wf-img { max-width: 100%; max-height: 200px; display: block; margin: 10px auto; border-radius: 8px; border: 1px solid #eee; }
+        
+        .wf-options { display: grid; grid-template-columns: 1fr; gap: 8px; }
+        .wf-opt-btn {
+            padding: 12px; border: 2px solid #eee; background: #fff; border-radius: 8px;
+            text-align: left; cursor: pointer; font-size: 1.3em; transition: 0.2s;
+        }
+        .wf-opt-btn:hover:not(:disabled) { border-color: var(--quick-mode-color); background: var(--quick-mode-bg); }
+        .wf-opt-btn.correct { background: #d4edda; border-color: var(--correct-color); color: #155724; font-weight: bold;}
+        .wf-opt-btn.wrong { background: #f8d7da; border-color: var(--wrong-color); color: #721c24; }
+        
+        .wf-explanation {
+            margin-top: 20px; background: #fff3e0; padding: 20px; 
+            border-radius: 8px; border: 1px solid #ffe0b2;
+            border-left: 6px solid var(--secondary-color); font-size: 1.3em; color: #37474f; display: none;
+        }
+
+        /* --- Collection & History --- */
+        .collection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+        .card-item { aspect-ratio: 2/3; border-radius: 8px; overflow: hidden; border: 1px solid #ddd; cursor: pointer; position: relative; background: #fff;}
+        .card-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .card-item.locked { cursor: default; }
+        .card-item.locked img { filter: grayscale(100%) contrast(0.8) brightness(0.8); }
+        .lock-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.4); font-size: 3em; color: #fff; text-shadow: 0 0 5px #000;
+        }
+
+        /* --- Modal --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 20000; display: none; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 10px; max-width: 90%; max-height: 90%; position: relative; text-align: center; }
+        .modal-close { position: absolute; top: -15px; right: -15px; background: red; color: white; width: 30px; height: 30px; border-radius: 50%; border: 2px solid white; cursor: pointer; font-weight: bold;}
+
+        /* Animations */
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* RWD */
+        @media (max-width: 768px) {
+            #level-screen-content { flex-direction: column; }
+            .dashboard-std-zone { border-right: none; border-bottom: 1px solid #90a4ae; }
+            .waterfall-header { flex-direction: column; align-items: flex-start; gap: 5px; top: 80px; margin-top: -15px;} 
+            .waterfall-stats { font-size: 0.9em; align-self: flex-end; }
+            .card-actions { top: 10px; right: 10px; }
+            body { padding-top: 100px; }
+            
+            #music-player-bar { 
+                padding: 0 10px; 
+            }
+            .player-left-group { gap: 5px; }
+            .player-right-group { gap: 5px; }
+
+            .marquee-container {
+                max-width: 80px; /* 手機版縮小跑馬燈 */
+            }
+            .volume-slider { display: none; } /* 手機版隱藏音量條以節省空間 */
+            #status-text { display: none; } /* 手機版狀態燈只顯示圓點 */
+            .status-indicator { padding: 5px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 音樂播放器 (HTML5 Audio) -->
+    <div id="music-player-bar">
+        <!-- 左側群組：圖示 + 跑馬燈 -->
+        <div class="player-left-group">
+            <div id="music-icon" class="player-icon">🎵</div>
+            <div class="marquee-container">
+                <div id="music-title" class="marquee-text">正在讀取歌單...</div>
+            </div>
+        </div>
+
+        <!-- 中間：播放控制 (置中) -->
+        <div class="player-controls">
+            <button class="ctrl-btn" onclick="prevTrack()" title="上一首">⏮</button>
+            <button id="play-pause-btn" class="ctrl-btn" onclick="toggleAudio()" title="播放/暫停">▶</button>
+            <button class="ctrl-btn" onclick="nextTrack(false)" title="下一首 (隨機)">⏭</button>
+        </div>
+        
+        <!-- 右側群組：音量 + 狀態燈 -->
+        <div class="player-right-group">
+            <div class="volume-group">
+                <button id="mute-btn" class="ctrl-btn" onclick="toggleMute()" title="靜音">🔊</button>
+                <input type="range" id="volume-slider" class="volume-slider" min="0" max="1" step="0.1" value="0.3" oninput="setAudioVolume(this.value)">
+            </div>
+            <div id="cloud-status" class="status-indicator">
+                <div id="status-dot" class="status-dot"></div>
+                <span id="status-text">連線中...</span>
+            </div>
+        </div>
+        
+        <!-- 隱藏的 Audio 標籤 -->
+        <audio id="bg-music"></audio>
+    </div>
+
+    <!-- 歡迎畫面 -->
+    <div id="welcome-screen" class="container-box fade-in">
+        <h1>歷史第4冊：L1 中華民國的早期發展</h1>
+        <div style="font-size: 4em; text-align: center; margin: 20px;">🇹🇼📜🏛️🚂</div>
+        <p style="text-align: center; font-size: 1.2em;">請輸入探險家代號，準備探索民國初期！</p>
+        
+        <div style="text-align:center;">
+            <input type="text" id="username" placeholder="請輸入探險家代號..." />
+        </div>
+        
+        <div class="avatar-selection">
+            <img src="History4-L1-images/Chris.png" class="avatar-option selected" onclick="selectAvatar('Chris.png', this)">
+            <img src="History4-L1-images/Louis.png" class="avatar-option" onclick="selectAvatar('Louis.png', this)">
+            <img src="History4-L1-images/kitty.png" class="avatar-option" onclick="selectAvatar('kitty.png', this)">
+        </div>
+
+        <div id="quick-login-area" class="quick-login-area">
+            <div style="color:#888; padding:10px;">資料載入中...</div>
+        </div>
+
+        <div style="text-align:center; margin-top: 30px;">
+            <button class="btn" onclick="loginAndStart()">🚀 進入歷史長河</button>
+<div style="margin-top: 20px;">
+    <a href="index.html" 
+       class="btn btn-gray" 
+       style="text-decoration: none; padding: 10px 20px;
+              background: linear-gradient(135deg, #ff4081 0%, #d81b60 100%);
+              color: white; border-radius: 999px; display: inline-block;">
+        🏠 返回歷史學習 App 總部
+    </a>
+</div>
+
+        </div>
+    </div>
+
+    <!-- 儀表板 (Level Screen) -->
+    <div id="level-screen" class="container-box fade-in" style="display: none;">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img id="user-avatar-display" src="" style="width:40px; height:40px; border-radius:50%; vertical-align:middle; border:2px solid #fff; box-shadow:0 2px 5px rgba(0,0,0,0.2);">
+            <span style="font-size: 1.2em; font-weight: bold; margin-left: 10px;">探險家：<span id="display-name" style="color:var(--primary-color);"></span></span>
+        </div>
+
+        <div id="level-screen-content">
+            <!-- 左側：標準實驗區 -->
+            <div class="dashboard-std-zone">
+                <div class="dashboard-title">🗺️ 歷史考察模式</div>
+                <div id="level-grid" class="level-grid"></div>
+            </div>
+
+            <!-- 右側：極速刷題區 -->
+            <div class="dashboard-speed-zone">
+                <div class="speed-title">⚡ 歷史速讀區</div>
+                <p style="color:#666; font-size:0.9em; text-align:center; margin-bottom: 10px;">不分章節，瀑布流快速複習</p>
+                <button class="speed-big-btn" onclick="startWaterfallQuiz('speed')">🚀 開始探索 (全範圍)</button>
+            </div>
+        </div>
+
+        <!-- 底部工具列 -->
+        <div class="dashboard-tools">
+            <button id="btn-mistake" class="btn btn-red" onclick="startWaterfallQuiz('mistake')" style="display:none;">📕 錯題筆記 (<span id="mistake-count">0</span>)</button>
+            <button id="btn-favorite" class="btn btn-pink" onclick="startWaterfallQuiz('favorite')" style="display:none;">⭐ 趨勢收藏 (<span id="favorite-count">0</span>)</button>
+            <button class="btn btn-blue" onclick="showCollection()">🏢 文物圖鑑</button>
+            <button class="btn btn-green" onclick="showHistory()">🏆 歷史名人堂</button>
+            <a href="index.html" class="btn btn-gray" style="text-decoration: none;">🚪 返回總部</a>
+        </div>
+    </div>
+
+    <!-- 標準測驗介面 (Single Question) -->
+    <div id="quiz-content" class="container-box fade-in" style="display: none;">
+        <div class="quiz-header">
+            <h3 id="level-title" style="margin:0; color:var(--primary-color);">章節 X</h3>
+            <div style="display:flex; gap:10px;">
+                <button id="std-fav-btn" class="btn btn-sm" style="background:#fff; border:2px solid var(--favorite-color); color:var(--favorite-color); padding: 5px 10px;" onclick="toggleStandardFavorite()">☆</button>
+                <button class="btn btn-orange btn-sm" style="padding: 5px 10px;" onclick="restartQuiz()">🔄 重新開始</button>
+                <button class="btn btn-gray btn-sm" style="padding: 5px 10px;" onclick="exitQuiz()">🏠 離開</button>
+            </div>
+        </div>
+        
+        <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar-fill"></div>
+        </div>
+        <div style="text-align: right; margin-bottom: 10px; font-weight: bold; color: #777;">
+            進度: <span id="current-q-num">1</span> / <span id="total-q-num">20</span>
+        </div>
+
+        <div id="question-container">
+            <div class="question-box">
+                <div id="question-text">題目載入中...</div>
+                <img id="question-image" style="max-width:100%; max-height:250px; display:none; margin-top:15px; border-radius:5px;">
+            </div>
+            <ul id="options-list" class="option-list"></ul>
+        </div>
+        
+        <div id="explanation" class="explanation-box">
+            <strong>💡 解析：</strong> <span id="explanation-text"></span>
+        </div>
+
+        <button id="next-btn" class="btn" style="display: none; width: 100%; margin-top: 20px;" onclick="nextQuestion()">下一章節 ➡️</button>
+    </div>
+
+    <!-- 瀑布流刷題介面 (Waterfall) -->
+    <div id="waterfall-screen" class="container-box fade-in">
+        <div class="waterfall-header">
+            <div class="waterfall-title">
+                <span id="wf-mode-icon">⚡</span> <span id="wf-mode-title">歷史速讀</span>
+            </div>
+            <div class="waterfall-stats">
+                已答: <span id="wf-answered" style="color:var(--primary-color)">0</span> / <span id="wf-total">0</span>
+                &nbsp;|&nbsp; 得分: <span id="wf-score" style="color:var(--correct-color)">0</span>
+            </div>
+            <div style="display:flex; gap: 5px;">
+                <button class="btn btn-orange btn-sm" onclick="restartQuiz()">🔄 重新開始</button>
+                <button class="btn btn-gray btn-sm" onclick="exitQuiz()">🏠 結束</button>
+            </div>
+        </div>
+        
+        <div id="waterfall-list">
+            <!-- 題目卡片將由 JS 生成 -->
+        </div>
+    </div>
+
+    <!-- 結算畫面 -->
+    <div id="score-box" class="container-box fade-in" style="display: none; text-align: center;">
+        <h2 style="color: var(--primary-color);">🎉 考察報告</h2>
+        <p style="font-size: 1.5em; margin: 10px;">探險家：<span id="final-name"></span></p>
+        <div style="font-size: 4em; font-weight: bold; color: var(--accent-color); margin: 20px 0;">
+            <span id="final-score">0</span> <span style="font-size:0.4em; color:#777;">分</span>
+        </div>
+        <div id="score-comment" style="font-size: 1.2em; color: #e67e22; margin-bottom: 20px;"></div>
+        
+        <div id="unlock-msg" style="display:none; color:var(--correct-color); font-weight:bold; font-size:1.2em; margin-bottom:15px;">🔓 下一章節研讀許可！</div>
+        <div id="new-card-alert" style="display:none; background:#e0f7fa; padding:10px; border-radius:10px; border:2px solid var(--secondary-color); margin-bottom:20px;">✨ 發現新文物！快去圖鑑查看！</div>
+
+        <div style="display: flex; justify-content: center; gap: 15px;">
+            <button class="btn" onclick="goToDashboard()">🗺️ 返回地圖</button>
+        </div>
+    </div>
+
+    <!-- 其他畫面 (History, Collection) -->
+    <div id="history-screen" class="container-box fade-in" style="display: none;">
+        <h2>🏆 歷史名人堂</h2>
+        <ul id="history-list" style="list-style: none; padding: 0;"></ul>
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="btn" onclick="goToDashboard()">🗺️ 返回</button>
+        </div>
+    </div>
+    
+    <div id="collection-screen" class="container-box fade-in" style="display: none;">
+        <h2>🏢 文物圖鑑 (需達80分)</h2>
+        <div id="collection-grid" class="collection-grid"></div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="btn" onclick="goToDashboard()">🗺️ 返回</button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="card-modal" class="modal-overlay" onclick="closeCardModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeCardModal()">×</button>
+            <img id="modal-img" src="" style="max-width:100%; max-height:80vh; border-radius:5px;">
+            <h3 id="modal-title" style="margin-top:10px; color:#333;"></h3>
+        </div>
+    </div>
+
+    <script type="module">
+        // ============================================
+        // 0. Firebase 初始化與設定 (合併版)
+        // ============================================
+        import { initializeApp } from 'firebase/app';
+        import { getAuth, signInAnonymously } from 'firebase/auth';
+        import { getFirestore, collection, doc, setDoc, updateDoc, onSnapshot, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
+
+        // 請填入您的 Firebase 設定
+        const firebaseConfig = {
+          apiKey: "AIzaSyAxQFt76ZPXE7d0i1XeNZ1yiiD2WYNIfHs",
+          authDomain: "chinese-learning-47f4d.firebaseapp.com",
+          projectId: "chinese-learning-47f4d",
+          storageBucket: "chinese-learning-47f4d.firebasestorage.app",
+          messagingSenderId: "76289812052",
+          appId: "1:76289812052:web:898384a916f9f341f62fc1"
+        };
+
+        let db, auth;
+        let isFirebaseReady = false;
+        
+        // 設定 Collection Name
+        const APP_PREFIX = 'History4-L1_';
+        const COLLECTION_NAME = 'History4-L1'; 
+        const DOC_GLOBAL = 'UserList'; // 儲存所有使用者的清單文件
+        
+        let currentUserDocUnsubscribe = null;
+        let globalUsersUnsubscribe = null;
+
+        // 全域資料快取
+        window.currentUserData = {
+            mistakeBank: [],
+            favoriteBank: [],
+            quizHistory: [],
+            quizProgress: { maxLevel: 1, scores: {} },
+            standardProgress: null,
+            waterfallProgress_speed: null,
+            waterfallProgress_mistake: null,
+            waterfallProgress_favorite: null
+        };
+
+        // 初始化 Firebase
+        function initFirebase() {
+            try {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                window.db = db; // Expose to window for potential debug or other script access
+                
+                window.updateConnectionStatus('loading');
+                
+                signInAnonymously(auth).then(() => {
+                    isFirebaseReady = true;
+                    console.log("Firebase Anonymous Auth Success");
+                    window.updateConnectionStatus('success');
+                    listenToGlobalUsers(); // 登入後監聽使用者列表
+                }).catch((error) => {
+                    console.error("Auth Error:", error);
+                    window.updateConnectionStatus('error');
+                    alert("無法連線至雲端資料庫，請檢查網路。");
+                });
+
+            } catch (e) {
+                console.error("Firebase Init Error", e);
+                window.updateConnectionStatus('error');
+            }
+        }
+        
+        // UI 狀態燈更新
+        window.updateConnectionStatus = function(status) {
+            const dot = document.getElementById('status-dot');
+            const text = document.getElementById('status-text');
+            
+            dot.classList.remove('loading', 'success', 'error');
+            
+            if (status === 'loading') {
+                dot.classList.add('loading');
+                text.innerText = '讀取資料中...';
+            } else if (status === 'success') {
+                dot.classList.add('success');
+                text.innerText = '已同步';
+            } else if (status === 'error') {
+                dot.classList.add('error');
+                text.innerText = '雲端同步失敗';
+            }
+        };
+
+        // 監聽全域使用者列表 (Login Screen 用)
+        function listenToGlobalUsers() {
+            const globalDocRef = doc(db, COLLECTION_NAME, DOC_GLOBAL);
+            globalUsersUnsubscribe = onSnapshot(globalDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    window.renderQuickLogin(data.users || []);
+                } else {
+                    window.renderQuickLogin([]); // 若文件不存在，傳空陣列
+                }
+            }, (error) => {
+                console.error("Listen Global Error:", error);
+                window.updateConnectionStatus('error');
+            });
+        }
+        
+        // 儲存資料到雲端 (Helper) - 現在強制使用 window.userName
+        window.updateUserData = async function(field, value) {
+            if (!isFirebaseReady || !window.userName) {
+                console.warn("Skipping save: Firebase not ready or no username set.");
+                return;
+            }
+            
+            window.updateConnectionStatus('loading');
+            
+            // 更新本地快取 (樂觀更新)
+            window.currentUserData[field] = value;
+            
+            const userDocRef = doc(db, COLLECTION_NAME, window.userName);
+            try {
+                await setDoc(userDocRef, { [field]: value }, { merge: true });
+                window.updateConnectionStatus('success');
+            } catch (e) {
+                console.error("Save Error:", e);
+                window.updateConnectionStatus('error');
+            }
+        };
+
+        // 監聽當前使用者資料
+        window.listenToCurrentUser = function(name) {
+             if (currentUserDocUnsubscribe) currentUserDocUnsubscribe(); // 取消舊的監聽
+             
+             window.updateConnectionStatus('loading');
+             const userDocRef = doc(db, COLLECTION_NAME, name);
+             
+             currentUserDocUnsubscribe = onSnapshot(userDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    // 合併雲端資料到本地快取
+                    window.currentUserData = { ...window.currentUserData, ...data };
+                    
+                    // --- 強制刷新畫面 ---
+                    if (document.getElementById('level-screen').style.display === 'block') {
+                        if (typeof window.renderLevelGrid === 'function') window.renderLevelGrid();
+                        if (typeof window.updateDashboardTools === 'function') window.updateDashboardTools();
+                        if(data.avatar && document.getElementById('user-avatar-display')) {
+                             document.getElementById('user-avatar-display').src = "History4-L1-images/" + window.currentAvatar;
+                        }
+                    }
+
+                    // 同步瀑布流進度
+                    if (document.getElementById('waterfall-screen').style.display === 'block') {
+                         const currentMode = window.quizState.mode;
+                         const cloudProgress = window.currentUserData['waterfallProgress_' + currentMode];
+                         
+                         if (cloudProgress) {
+                             window.quizState = cloudProgress;
+                             window.updateWaterfallStats();
+                         }
+                    }
+                    
+                    window.updateConnectionStatus('success');
+                } else {
+                    // 新使用者，無資料
+                    window.updateConnectionStatus('success');
+                }
+             }, (e) => {
+                 console.error("User Sync Error:", e);
+                 window.updateConnectionStatus('error');
+             });
+        }
+
+        // 新增/更新全域使用者列表
+        window.saveUserGlobal = async function() {
+            if (!db) return; 
+            if (!window.userName) return;
+
+            const globalRef = doc(db, COLLECTION_NAME, DOC_GLOBAL);
+            try {
+                const snap = await getDoc(globalRef);
+                const newUser = { name: window.userName, avatar: window.currentAvatar };
+                
+                if (snap.exists()) {
+                    const users = snap.data().users || [];
+                    const exists = users.some(u => u.name === window.userName);
+                    if (!exists) {
+                        await updateDoc(globalRef, { users: arrayUnion(newUser) });
+                    }
+                } else {
+                    await setDoc(globalRef, { users: [newUser] });
+                }
+            } catch (e) {
+                console.error("Global User Save Error", e);
+            }
+        };
+
+        // 刪除使用者
+        window.deleteUser = async function(name) {
+             if(!confirm(`刪除 ${name} 的所有資料？`)) return;
+             if (!db) return;
+             const globalRef = doc(db, COLLECTION_NAME, DOC_GLOBAL);
+             try {
+                 const snap = await getDoc(globalRef);
+                 if(snap.exists()) {
+                     const users = snap.data().users || [];
+                     const target = users.find(u => u.name === name);
+                     if(target) {
+                         await updateDoc(globalRef, { users: arrayRemove(target) });
+                     }
+                 }
+             } catch(e) {
+                 console.error("Delete Error", e);
+                 alert("刪除失敗，請檢查網路");
+             }
+        };
+
+        // 啟動
+        initFirebase();
+    </script>
+
+    <script>
+        // ============================================
+        // 1. 設定與全域變數 (一般 JS)
+        // ============================================
+        const MUSIC_CONFIG = {
+            username: 'nicktsai88', // 例如 'johndoe'
+            repo: 'Music',      // 例如 'geography-quiz'
+            folder: ''            // 資料夾名稱 (若無則留空 '')
+        };
+
+        // 動態關卡計算設定
+        const ITEMS_PER_PAGE = 20;
+        let totalLevels = 0; 
+        
+        // 音樂播放器變數
+        const bgAudio = document.getElementById('bg-music');
+        let playlist = []; 
+        let currentTrackIndex = 0;
+        let isMusicPlaying = false;
+
+        let allQuestions = [], currentQuizData = [];
+        
+        // *** 關鍵修正：確保變數掛載到 window，讓 Module 讀得到 ***
+        window.userName = ""; 
+        window.currentAvatar = "Chris.png";
+        
+        // 測驗狀態
+        let quizState = {
+            mode: 'standard', 
+            level: 1,
+            score: 0,
+            currentIndex: 0,
+            answers: {}, 
+            locked: {}
+        };
+
+        const audioCorrect = new Audio('sounds/correct.mp3'); audioCorrect.volume = 0.4;
+        const audioFail = new Audio('sounds/fail.mp3'); audioFail.volume = 0.4;
+
+        // --- 初始化 ---
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchMusicFromGitHub(); 
+            fetch('questions.json').then(res => res.json())
+                .then(data => { 
+                    allQuestions = data; 
+                    totalLevels = Math.ceil(allQuestions.length / ITEMS_PER_PAGE);
+                    console.log(`Questions loaded: ${allQuestions.length}, Levels: ${totalLevels}`);
+                }) 
+                .catch(e => console.error("Error loading questions:", e));
+        });
+
+        // ============================================
+        // 2. 音樂播放器邏輯 (GitHub API + Audio)
+        // ============================================
+        
+        async function fetchMusicFromGitHub() {
+            const { username, repo, folder } = MUSIC_CONFIG;
+            if(!username || !repo) {
+                document.getElementById('music-title').innerText = "尚未設定 GitHub 資訊";
+                return;
+            }
+
+            const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${folder}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error('GitHub API Error');
+                const files = await response.json();
+                
+                playlist = files
+                    .filter(file => file.name.toLowerCase().endsWith('.mp3'))
+                    .map(file => ({
+                        title: file.name.replace(/\.mp3$/i, ''),
+                        url: file.download_url
+                    }));
+
+                if (playlist.length > 0) {
+                    shuffleArray(playlist); 
+                    loadTrack(0); 
+                } else {
+                    document.getElementById('music-title').innerText = "找不到 MP3 檔案";
+                }
+            } catch (error) {
+                console.error('Fetch Music Error:', error);
+                document.getElementById('music-title').innerText = "無法載入歌單 (請檢查設定)";
+            }
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function loadTrack(index) {
+            if (playlist.length === 0) return;
+            currentTrackIndex = index;
+            
+            bgAudio.src = playlist[index].url;
+            bgAudio.load();
+            document.getElementById('music-title').innerText = `🎵 ${playlist[index].title} 🎵`;
+            
+            const marquee = document.getElementById('music-title');
+            marquee.style.animation = 'none';
+            marquee.offsetHeight; 
+            marquee.style.animation = 'marquee 25s linear infinite';
+        }
+
+        function toggleAudio() {
+            if (playlist.length === 0) return;
+            
+            if (bgAudio.paused) {
+                playMusic();
+            } else {
+                pauseMusic();
+            }
+        }
+
+        function playMusic() {
+            const playPromise = bgAudio.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    isMusicPlaying = true;
+                    updatePlayerUI(true);
+                }).catch(error => {
+                    console.log("Autoplay prevented:", error);
+                    isMusicPlaying = false;
+                    updatePlayerUI(false);
+                });
+            }
+        }
+
+        function pauseMusic() {
+            bgAudio.pause();
+            isMusicPlaying = false;
+            updatePlayerUI(false);
+        }
+
+        function toggleMute() {
+            bgAudio.muted = !bgAudio.muted;
+            const btn = document.getElementById('mute-btn');
+            if (bgAudio.muted) {
+                btn.innerText = '🔇';
+            } else {
+                btn.innerText = '🔊';
+            }
+        }
+
+        function updatePlayerUI(playing) {
+            const btn = document.getElementById('play-pause-btn');
+            const icon = document.getElementById('music-icon'); // 恢復獲取 icon 元素
+            if (playing) {
+                btn.innerText = '⏸';
+                btn.style.paddingLeft = '0px'; 
+                if(icon) icon.style.animationPlayState = 'running'; // 恢復動畫控制
+            } else {
+                btn.innerText = '▶';
+                btn.style.paddingLeft = '3px'; 
+                if(icon) icon.style.animationPlayState = 'paused'; // 恢復動畫控制
+            }
+        }
+
+        function nextTrack(isAuto = false) {
+            if (playlist.length === 0) return;
+            let nextIndex = (currentTrackIndex + 1) % playlist.length;
+            loadTrack(nextIndex);
+            if (isMusicPlaying || isAuto) playMusic();
+        }
+
+        function prevTrack() {
+            if (playlist.length === 0) return;
+            let prevIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+            loadTrack(prevIndex);
+            if (isMusicPlaying) playMusic();
+        }
+
+        function setAudioVolume(val) {
+            bgAudio.volume = val;
+            if(val > 0 && bgAudio.muted) {
+                 toggleMute(); // 如果調整音量，自動取消靜音
+            }
+        }
+
+        bgAudio.addEventListener('ended', () => {
+            nextTrack(true);
+        });
+
+        // ============================================
+        // 3. 既有遊戲邏輯 (修改為 Firebase 版)
+        // ============================================
+
+        function selectAvatar(img, el) {
+            window.currentAvatar = img; // *** FIX ***
+            document.querySelectorAll('.avatar-option').forEach(e => e.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        async function loginAndStart() {
+            const name = document.getElementById('username').value.trim();
+            if(!name) return alert('請輸入探險家代號');
+            
+            window.userName = name; // *** FIX: Set to window so module can see it ***
+            
+            playMusic();
+            
+            // 這些函式現在是 window 的方法
+            if(window.saveUserGlobal) await window.saveUserGlobal(); 
+            if(window.listenToCurrentUser) window.listenToCurrentUser(window.userName);
+            
+            window.updateConnectionStatus('loading');
+            setTimeout(() => {
+                goToDashboard();
+            }, 800);
+        }
+
+        // 我們需要重寫 renderQuickLogin 以支援捲軸和歡迎訊息
+        window.renderQuickLogin = function(users) {
+            const container = document.getElementById('quick-login-area');
+            if (!container) return;
+            if (users.length === 0) {
+                container.innerHTML = `<div style="padding:20px; color:#666; width:100%; text-align:center;">尚無探險家紀錄，歡迎加入！</div>`;
+                return;
+            }
+            
+            container.innerHTML = users.map(u => `
+                <div class="user-tag" onclick="quickLogin('${u.name}', '${u.avatar}')">
+                    <img src="History4-L1-images/${u.avatar}" style="width:20px;height:20px;border-radius:50%;">${u.name}
+                    <span class="delete-user" onclick="event.stopPropagation();deleteUser('${u.name}')">×</span>
+                </div>
+            `).join('');
+        }
+
+        function quickLogin(name, av) {
+            document.getElementById('username').value = name;
+            window.userName = name; // *** FIX ***
+            window.currentAvatar = av; // *** FIX ***
+            loginAndStart();
+        }
+
+        function deleteUser(name) {
+            if(window.deleteUser) window.deleteUser(name);
+        }
+
+        // 接續一般 JS 邏輯
+
+        function goToDashboard() {
+            hideAllScreens();
+            document.getElementById('level-screen').style.display = 'block';
+            document.getElementById('display-name').innerText = window.userName;
+            document.getElementById('user-avatar-display').src = "History4-L1-images/" + window.currentAvatar;
+            
+            renderLevelGrid();
+            updateDashboardTools();
+        }
+
+        function hideAllScreens() {
+            document.querySelectorAll('.container-box').forEach(el => el.style.display = 'none');
+        }
+
+        // --- 標準實驗模式 ---
+        window.renderLevelGrid = function() {
+            const grid = document.getElementById('level-grid');
+            if(!grid) return;
+            
+            grid.innerHTML = "";
+            let progress = window.currentUserData.quizProgress || { maxLevel: 1, scores: {} };
+            
+            if(!progress.scores) progress.scores = {};
+            if(!progress.maxLevel) progress.maxLevel = 1;
+
+            for (let i = 0; i < totalLevels; i++) {
+                const level = i + 1;
+                const btn = document.createElement('button');
+                btn.className = 'level-grid-btn';
+                
+                if (level <= progress.maxLevel) {
+                    const score = progress.scores[level];
+                    let icon = '📖'; 
+                    if (score >= 90) icon = '🏆'; 
+                    else if (score >= 70) icon = '🏛️'; 
+                    
+                    btn.innerHTML = `<div class="lvl-icon">${icon}</div><div class="lvl-label">章節 ${level}</div>${score !== undefined ? `<div class="lvl-score">${score}分</div>` : ''}`;
+                    btn.onclick = () => startStandardQuiz(level);
+                } else {
+                    btn.disabled = true;
+                    btn.innerHTML = `<div class="lvl-icon" style="filter:grayscale(1);">🔒</div><div class="lvl-label">章節 ${level}</div>`;
+                }
+                grid.appendChild(btn);
+            }
+        }
+
+        function startStandardQuiz(level, forceNew = false) {
+            // 從快取讀取進度
+            if(!forceNew && window.currentUserData.standardProgress) {
+                const saved = window.currentUserData.standardProgress;
+                if(saved && saved.level === level) {
+                       quizState = saved;
+                       currentQuizData = allQuestions.filter(q => quizState.qIds.includes(q.id));
+                       loadStandardUI();
+                       return;
+                }
+            }
+            
+            let startIdx = (level - 1) * ITEMS_PER_PAGE;
+            let endIdx = startIdx + ITEMS_PER_PAGE;
+            
+            quizState = {
+                mode: 'standard',
+                level: level,
+                score: 0,
+                currentIndex: 0,
+                answers: {},
+                locked: {},
+                qIds: allQuestions.slice(startIdx, endIdx).map(q => q.id)
+            };
+            
+            currentQuizData = allQuestions.filter(q => quizState.qIds.includes(q.id));
+            if(currentQuizData.length === 0) return alert('無題目數據');
+            
+            loadStandardUI();
+        }
+
+        function loadStandardUI() {
+            hideAllScreens();
+            document.getElementById('quiz-content').style.display = 'block';
+            document.getElementById('level-title').innerText = `🏛️ 章節 ${quizState.level}`;
+            document.getElementById('total-q-num').innerText = currentQuizData.length;
+            loadStandardQuestion();
+        }
+
+        function loadStandardQuestion() {
+            const qData = currentQuizData[quizState.currentIndex];
+            if(!qData) return finishStandardQuiz();
+            
+            if(window.updateUserData) window.updateUserData('standardProgress', quizState);
+
+            document.getElementById('current-q-num').innerText = quizState.currentIndex + 1;
+            document.getElementById('progress-bar').style.width = ((quizState.currentIndex) / currentQuizData.length * 100) + '%';
+            
+            document.getElementById('question-text').innerText = qData.question;
+            const imgEl = document.getElementById('question-image');
+            imgEl.style.display = qData.image ? 'block' : 'none';
+            if(qData.image) imgEl.src = qData.image;
+
+            const list = document.getElementById('options-list');
+            list.innerHTML = "";
+            
+            const isAnswered = quizState.answers[qData.id] !== undefined;
+            const userAns = quizState.answers[qData.id];
+
+            qData.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                
+                if(isAnswered) {
+                    btn.disabled = true;
+                    btn.classList.add('locked'); // Add visual style if needed or rely on disabled
+                    const optCode = opt.substring(0,3);
+                    const ansCode = qData.answer.substring(0,3);
+                    if(optCode === ansCode) btn.classList.add('correct');
+                    if(optCode === userAns.substring(0,3) && optCode !== ansCode) btn.classList.add('wrong');
+                } else {
+                    btn.onclick = () => handleStandardAnswer(btn, opt, qData);
+                }
+                list.appendChild(btn);
+            });
+            
+            const expBox = document.getElementById('explanation');
+            if(isAnswered) {
+                document.getElementById('explanation-text').innerText = qData.explanation || "略";
+                expBox.style.display = 'block';
+                document.getElementById('next-btn').style.display = 'block';
+            } else {
+                expBox.style.display = 'none';
+                document.getElementById('next-btn').style.display = 'none';
+            }
+            
+            updateStandardFavoriteUI(qData.id);
+        }
+
+        function handleStandardAnswer(btn, option, qData) {
+            quizState.answers[qData.id] = option;
+            const correct = qData.answer.substring(0,3);
+            const selected = option.substring(0,3);
+            
+            if(selected === correct) {
+                quizState.score++;
+                audioCorrect.play().catch(()=>{});
+                confetti({ particleCount: 50, origin: { y: 0.8 } });
+            } else {
+                audioFail.play().catch(()=>{});
+                addToMistake(qData.id);
+            }
+            loadStandardQuestion();
+        }
+
+        function nextQuestion() {
+            quizState.currentIndex++;
+            loadStandardQuestion();
+        }
+
+        function finishStandardQuiz() {
+            if(window.updateUserData) window.updateUserData('standardProgress', null);
+            
+            document.getElementById('quiz-content').style.display = 'none';
+            document.getElementById('score-box').style.display = 'block';
+            
+            const finalScore = Math.round((quizState.score / currentQuizData.length) * 100);
+            document.getElementById('final-score').innerText = finalScore;
+            document.getElementById('final-name').innerText = window.userName;
+            
+            let progress = window.currentUserData.quizProgress || { maxLevel: 1, scores: {} };
+            if(!progress.scores) progress.scores = {};
+            if(!progress.maxLevel) progress.maxLevel = 1;
+
+            let oldScore = progress.scores[quizState.level] || 0;
+            if(finalScore > oldScore) progress.scores[quizState.level] = finalScore;
+            
+            let unlocked = false;
+            if(finalScore >= 70 && quizState.level === progress.maxLevel && quizState.level < totalLevels) {
+                progress.maxLevel++;
+                unlocked = true;
+            }
+            
+            if(window.updateUserData) window.updateUserData('quizProgress', progress);
+            
+            document.getElementById('unlock-msg').style.display = unlocked ? 'block' : 'none';
+            document.getElementById('new-card-alert').style.display = (finalScore >= 70 && oldScore < 70) ? 'block' : 'none';
+            
+            let cmt = "再接再厲！";
+            if(finalScore == 100) cmt = "晉升歷史博士！";
+            else if(finalScore >= 90) cmt = "歷史敏銳度極高！";
+            else if(finalScore >= 70) cmt = "研讀成功！";
+            document.getElementById('score-comment').innerText = cmt;
+
+            saveHistory(finalScore, `章節 ${quizState.level}`);
+        }
+
+        // --- 瀑布流刷題模式 ---
+        function startWaterfallQuiz(mode, forceNew = false) {
+            const savedKey = 'waterfallProgress_' + mode;
+            if(!forceNew && window.currentUserData[savedKey]) {
+                const saved = window.currentUserData[savedKey];
+                if(saved) {
+                    quizState = saved;
+                    renderWaterfallUI();
+                    return;
+                }
+            }
+
+            quizState = {
+                mode: mode,
+                score: 0,
+                answers: {},
+                locked: {}, 
+                qIds: []
+            };
+
+            if(mode === 'speed') {
+                quizState.qIds = allQuestions.map(q => q.id); 
+                document.getElementById('wf-mode-title').innerText = "歷史速讀";
+                document.getElementById('wf-mode-icon').innerText = "⚡";
+            } else if(mode === 'mistake') {
+                quizState.qIds = window.currentUserData.mistakeBank || [];
+                document.getElementById('wf-mode-title').innerText = "錯題筆記";
+                document.getElementById('wf-mode-icon').innerText = "📕";
+            } else if(mode === 'favorite') {
+                quizState.qIds = window.currentUserData.favoriteBank || [];
+                document.getElementById('wf-mode-title').innerText = "趨勢收藏";
+                document.getElementById('wf-mode-icon').innerText = "⭐";
+            }
+
+            if(quizState.qIds.length === 0) return alert("目前沒有題目！");
+            
+            renderWaterfallUI();
+        }
+
+        function renderWaterfallUI() {
+            hideAllScreens();
+            document.getElementById('waterfall-screen').style.display = 'block';
+            window.updateWaterfallStats(); 
+            
+            const list = document.getElementById('waterfall-list');
+            list.innerHTML = "";
+            
+            const questions = allQuestions.filter(q => quizState.qIds.includes(q.id));
+
+            questions.forEach((q, idx) => {
+                const card = document.createElement('div');
+                card.className = 'waterfall-card';
+                card.id = `card-${q.id}`;
+                
+                const isFav = isFavorite(q.id);
+                const canDelete = (quizState.mode === 'mistake' || quizState.mode === 'favorite');
+                
+                let actionsHtml = `
+                    <div class="card-actions">
+                         ${canDelete ? `<span class="action-icon trash" onclick="deleteCardItem('${q.id}')">🗑️</span>` : ''}
+                        <span class="action-icon ${isFav ? 'active' : ''}" onclick="toggleWaterfallFav(this, '${q.id}')">${isFav ? '♥&#xFE0E;' : '♡&#xFE0E;'}</span>
+                    </div>
+                `;
+                
+                let imgHtml = q.image ? `<img src="${q.image}" class="wf-img">` : '';
+                let qTextHtml = `<div class="wf-question-text"><span class="wf-q-badge">#${idx+1}</span>${q.question}</div>`;
+
+                let optionsHtml = '<div class="wf-options">';
+                q.options.forEach(opt => {
+                    let btnClass = 'wf-opt-btn';
+                    let disabled = '';
+                    
+                    if(quizState.locked[q.id]) {
+                        disabled = 'disabled';
+                        const correct = q.answer.substring(0,3);
+                        const val = opt.substring(0,3);
+                        const userSel = quizState.answers[q.id] ? quizState.answers[q.id].substring(0,3) : null;
+                        
+                        if(val === correct) btnClass += ' correct';
+                        if(userSel === val && userSel !== correct) btnClass += ' wrong';
+                    }
+                    
+                    optionsHtml += `<button class="${btnClass}" ${disabled} onclick="handleWaterfallAnswer('${q.id}', '${opt}')">${opt}</button>`;
+                });
+                optionsHtml += '</div>';
+
+                let expStyle = quizState.locked[q.id] ? 'display:block' : '';
+                let expHtml = `<div class="wf-explanation" style="${expStyle}"><strong>💡 解析：</strong>${q.explanation||'略'}</div>`;
+
+                card.innerHTML = actionsHtml + qTextHtml + imgHtml + optionsHtml + expHtml;
+                list.appendChild(card);
+
+                if(quizState.locked[q.id]) {
+                    card.classList.add('locked');
+                    const correct = q.answer.substring(0,3);
+                    const userSel = quizState.answers[q.id] ? quizState.answers[q.id].substring(0,3) : '';
+                    if(userSel === correct) card.classList.add('card-correct');
+                    else card.classList.add('card-wrong');
+                }
+            });
+            window.scrollTo(0, 0);
+        }
+
+        function handleWaterfallAnswer(qId, option) {
+            if(quizState.locked[qId]) return;
+            
+            const qData = allQuestions.find(q => String(q.id) === String(qId));
+            if(!qData) return;
+
+            quizState.answers[qId] = option;
+            quizState.locked[qId] = true;
+            
+            const correct = qData.answer.substring(0,3);
+            const selected = option.substring(0,3);
+            const card = document.getElementById(`card-${qId}`);
+
+            if(selected === correct) {
+                quizState.score++;
+                audioCorrect.play().catch(()=>{});
+                confetti({ particleCount: 50, origin: { y: 0.8 } });
+                if(card) card.classList.add('card-correct');
+            } else {
+                audioFail.play().catch(()=>{});
+                addToMistake(qId);
+                if(card) card.classList.add('card-wrong');
+            }
+            
+            if(window.updateUserData) window.updateUserData('waterfallProgress_' + quizState.mode, quizState);
+            window.updateWaterfallStats();
+            
+            if(card) {
+                card.classList.add('locked');
+                const btns = card.querySelectorAll('.wf-opt-btn');
+                btns.forEach(btn => {
+                    btn.disabled = true;
+                    const val = btn.innerText.substring(0,3);
+                    if(val === correct) btn.classList.add('correct');
+                    if(val === selected && val !== correct) btn.classList.add('wrong');
+                });
+                card.querySelector('.wf-explanation').style.display = 'block';
+            }
+        }
+
+        // 掛載到 window 以供模組呼叫
+        window.updateWaterfallStats = function() {
+            if (!quizState || !quizState.locked) return;
+            const answered = Object.keys(quizState.locked).length;
+            const total = quizState.qIds.length;
+            const scoreEl = document.getElementById('wf-score');
+            const ansEl = document.getElementById('wf-answered');
+            const totalEl = document.getElementById('wf-total');
+            
+            if(scoreEl) scoreEl.innerText = quizState.score;
+            if(ansEl) ansEl.innerText = answered;
+            if(totalEl) totalEl.innerText = total;
+        }
+
+        function addToMistake(id) {
+            let list = window.currentUserData.mistakeBank || [];
+            if(!list.includes(id)) {
+                const newList = [...list, id];
+                if(window.updateUserData) window.updateUserData('mistakeBank', newList);
+                window.updateDashboardTools();
+            }
+        }
+
+        function isFavorite(id) {
+            let list = window.currentUserData.favoriteBank || [];
+            return list.includes(id);
+        }
+
+        function toggleWaterfallFav(btn, id) {
+            let list = window.currentUserData.favoriteBank || [];
+            let newList;
+            
+            if(list.includes(id)) {
+                newList = list.filter(x => x !== id);
+                btn.classList.remove('active');
+                btn.innerHTML = '♡&#xFE0E;';
+            } else {
+                newList = [...list, id];
+                btn.classList.add('active');
+                btn.innerHTML = '♥&#xFE0E;';
+            }
+            if(window.updateUserData) window.updateUserData('favoriteBank', newList);
+            window.updateDashboardTools();
+        }
+
+        window.updateDashboardTools = function() {
+            let mList = window.currentUserData.mistakeBank || [];
+            let fList = window.currentUserData.favoriteBank || [];
+            
+            const btnM = document.getElementById('btn-mistake');
+            const btnF = document.getElementById('btn-favorite');
+            
+            if(mList.length > 0) {
+                btnM.style.display = 'inline-block';
+                document.getElementById('mistake-count').innerText = mList.length;
+            } else btnM.style.display = 'none';
+
+            if(fList.length > 0) {
+                btnF.style.display = 'inline-block';
+                document.getElementById('favorite-count').innerText = fList.length;
+            } else btnF.style.display = 'none';
+        }
+
+        function deleteCardItem(id) {
+            if(!confirm("確定要從此清單中刪除這題嗎？")) return;
+            if(!confirm("再次確認：刪除後將無法恢復！")) return;
+            
+            if(quizState.mode === 'mistake') {
+                let list = window.currentUserData.mistakeBank || [];
+                const newList = list.filter(x => x !== id);
+                if(window.updateUserData) window.updateUserData('mistakeBank', newList);
+                quizState.qIds = newList;
+            } else if (quizState.mode === 'favorite') {
+                let list = window.currentUserData.favoriteBank || [];
+                const newList = list.filter(x => x !== id);
+                if(window.updateUserData) window.updateUserData('favoriteBank', newList);
+                quizState.qIds = newList;
+            }
+
+            const card = document.getElementById(`card-${id}`);
+            if(card) card.remove();
+            
+            if(window.updateUserData) window.updateUserData('waterfallProgress_' + quizState.mode, quizState);
+            window.updateWaterfallStats();
+            window.updateDashboardTools();
+            
+            if(quizState.qIds.length === 0) {
+                alert("清單已空！");
+                exitQuiz();
+            }
+        }
+
+        function toggleStandardFavorite() {
+            if(!currentQuizData[quizState.currentIndex]) return;
+            const id = currentQuizData[quizState.currentIndex].id;
+            let list = window.currentUserData.favoriteBank || [];
+            let newList;
+            
+            if(list.includes(id)) {
+                newList = list.filter(x => x !== id);
+            } else {
+                newList = [...list, id];
+            }
+            if(window.updateUserData) window.updateUserData('favoriteBank', newList);
+            updateStandardFavoriteUI(id);
+            window.updateDashboardTools();
+        }
+
+        function updateStandardFavoriteUI(id) {
+            let list = window.currentUserData.favoriteBank || [];
+            const btn = document.getElementById('std-fav-btn');
+            if(list.includes(id)) {
+                btn.innerText = '★'; btn.style.background = 'var(--favorite-color)'; btn.style.color = 'white';
+            } else {
+                btn.innerText = '☆'; btn.style.background = 'white'; btn.style.color = 'var(--favorite-color)';
+            }
+        }
+
+        function exitQuiz() {
+            if(confirm("確定要暫時離開？(系統將自動儲存進度，並記錄目前成績)")) {
+                if (quizState.mode === 'standard' && currentQuizData.length > 0) {
+                    const currentScore = Math.round((quizState.score / currentQuizData.length) * 100);
+                    saveHistory(currentScore, `章節 ${quizState.level} (未完)`);
+                }
+                goToDashboard();
+            }
+        }
+
+        function restartQuiz() {
+            if (!confirm("確定要重新開始嗎？所有進度將被清除！")) return;
+            if (!confirm("再次確認：清除後無法復原，確定重新開始？")) return;
+
+            if (quizState.mode === 'standard') {
+                if(window.updateUserData) window.updateUserData('standardProgress', null);
+                startStandardQuiz(quizState.level, true); 
+            } else {
+                if(window.updateUserData) window.updateUserData('waterfallProgress_' + quizState.mode, null);
+                startWaterfallQuiz(quizState.mode, true);
+            }
+        }
+
+        function saveHistory(score, modeTitle) {
+            let history = window.currentUserData.quizHistory || [];
+            const newRecord = {
+                date: new Date().toLocaleString(),
+                score: score,
+                mode: modeTitle
+            };
+            const newHistory = [...history, newRecord];
+            if(window.updateUserData) window.updateUserData('quizHistory', newHistory);
+        }
+        
+        function showHistory() {
+            hideAllScreens();
+            document.getElementById('history-screen').style.display = 'block';
+            const list = document.getElementById('history-list');
+            let history = window.currentUserData.quizHistory || [];
+            list.innerHTML = history.slice().reverse().map(h => `
+                <li style="background:#fff; padding:15px; border-bottom:1px solid #eee; margin-bottom:10px; border-radius:5px;">
+                    <strong>${h.mode}</strong> - <span style="color:${h.score>=70?'green':'red'}">${h.score}分</span>
+                    <br><small>${h.date}</small>
+                </li>
+            `).join('') || '<p style="text-align:center">無紀錄</p>';
+        }
+
+        function showCollection() {
+            hideAllScreens();
+            document.getElementById('collection-screen').style.display = 'block';
+            const grid = document.getElementById('collection-grid');
+            grid.innerHTML = "";
+            const progress = window.currentUserData.quizProgress || { maxLevel: 1, scores: {} }; 
+            
+            if(!progress.scores) progress.scores = {};
+            const scores = progress.scores || {};
+
+            for(let i=1; i<=totalLevels; i++) {
+                const num = i<10?`0${i}`:`${i}`;
+                const unlocked = (scores[i] >= 70);
+                
+                const item = document.createElement('div');
+                item.className = `card-item ${unlocked ? '' : 'locked'}`;
+                
+                let htmlContent = `<img src="History4-L1-images/card_${num}.jpg" onerror="this.style.display='none';this.parentNode.innerHTML='圖片載入失敗'">`;
+                if(!unlocked) {
+                    htmlContent += `<div class="lock-overlay">🔒</div><div style="position:absolute;bottom:10px;width:100%;text-align:center;font-weight:bold;color:white;text-shadow:0 0 3px #000;">章節 ${i}</div>`;
+                }
+                item.innerHTML = htmlContent;
+
+                if(unlocked) {
+                    item.onclick = () => openCardModal(`History4-L1-images/card_${num}.jpg`, `文物卡 #${num}`);
+                }
+                
+                grid.appendChild(item);
+            }
+        }
+
+        function openCardModal(src, title) {
+            document.getElementById('modal-img').src = src;
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('card-modal').style.display = 'flex';
+        }
+        function closeCardModal() { document.getElementById('card-modal').style.display = 'none'; }
+        
+        function logout() { location.reload(); }
+
+    </script>
+</body>
+</html>
