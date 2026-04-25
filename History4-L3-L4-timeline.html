@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>現代國家的挑戰與變局：歷史時間軸</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+        }
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 1rem;
+            height: 100%;
+            width: 4px;
+            background: #cbd5e1;
+            border-radius: 2px;
+        }
+        @media (min-width: 768px) {
+            .timeline-container::before {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+        .highlight {
+            font-weight: 700;
+            color: #b91c1c;
+            background-color: #fee2e2;
+            padding: 0 4px;
+            border-radius: 4px;
+        }
+        
+        /* 動畫效果 */
+        .timeline-item {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease-out;
+        }
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white py-12 px-4 text-center shadow-lg relative overflow-hidden">
+        <div class="relative z-10 max-w-4xl mx-auto">
+            <h1 class="text-4xl md:text-5xl font-black mb-4 tracking-wider">現代國家的挑戰與變局</h1>
+            <p class="text-xl md:text-2xl text-slate-300 mb-8">從北伐統一到政府遷臺 (1921 - 1949)</p>
+            
+            <!-- Filters -->
+            <div class="flex flex-wrap justify-center gap-3" id="filters">
+                <button onclick="filterTimeline('all')" class="filter-btn active bg-slate-700 hover:bg-slate-600 text-white px-6 py-2 rounded-full font-bold transition shadow" data-category="all">
+                    <i class="fas fa-globe-asia mr-2"></i>全部事件
+                </button>
+                <button onclick="filterTimeline('kmt-ccp')" class="filter-btn bg-blue-100 hover:bg-blue-200 text-blue-800 border border-blue-300 px-4 py-2 rounded-full font-bold transition shadow" data-category="kmt-ccp">
+                    <i class="fas fa-handshake mr-2"></i>國共發展
+                </button>
+                <button onclick="filterTimeline('war')" class="filter-btn bg-red-100 hover:bg-red-200 text-red-800 border border-red-300 px-4 py-2 rounded-full font-bold transition shadow" data-category="war">
+                    <i class="fas fa-fire mr-2"></i>中日衝突
+                </button>
+                <button onclick="filterTimeline('intl')" class="filter-btn bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border border-emerald-300 px-4 py-2 rounded-full font-bold transition shadow" data-category="intl">
+                    <i class="fas fa-globe mr-2"></i>國際局勢
+                </button>
+                <button onclick="filterTimeline('domestic')" class="filter-btn bg-purple-100 hover:bg-purple-200 text-purple-800 border border-purple-300 px-4 py-2 rounded-full font-bold transition shadow" data-category="domestic">
+                    <i class="fas fa-landmark mr-2"></i>內政建設
+                </button>
+            </div>
+        </div>
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+    </header>
+
+    <!-- Timeline Content -->
+    <main class="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div class="relative timeline-container" id="timeline-container">
+            <!-- 內容由 JavaScript 動態生成 -->
+        </div>
+    </main>
+
+    <footer class="bg-slate-800 text-slate-400 text-center py-6">
+        <p>整理自：余老師講義 (第三課~第四課) | 重點筆記互動時間軸</p>
+    </footer>
+
+    <script>
+        // 資料定義
+        const timelineData = [
+            {
+                year: "1921",
+                title: "中國共產黨成立",
+                category: "kmt-ccp",
+                icon: "fa-star",
+                color: "bg-red-500",
+                textColor: "text-red-600",
+                borderColor: "border-red-200",
+                content: "在【蘇聯】共產國際號召下，【陳獨秀】、李大釗於【上海】成立中國共產黨。初期勢力薄弱，難以赤化中國。"
+            },
+            {
+                year: "1923 - 1927",
+                title: "聯俄容共 (國共第一次合作)",
+                category: "kmt-ccp",
+                icon: "fa-handshake",
+                color: "bg-blue-500",
+                textColor: "text-blue-600",
+                borderColor: "border-blue-200",
+                content: "孫中山為取得蘇聯軍援以掃滅軍閥，實行【聯俄容共】。中共黨員以【個人身分】加入國民黨（黨內合作）。國民黨模仿蘇共集權化，形成黨國體制雛形。"
+            },
+            {
+                year: "1925",
+                title: "廣州國民政府成立",
+                category: "domestic",
+                icon: "fa-landmark",
+                color: "bg-purple-500",
+                textColor: "text-purple-600",
+                borderColor: "border-purple-200",
+                content: "孫中山過世後成立，以消滅軍閥為目的。由【汪精衛】擔任主席。"
+            },
+            {
+                year: "1926",
+                title: "北伐誓師",
+                category: "domestic",
+                icon: "fa-flag",
+                color: "bg-purple-500",
+                textColor: "text-purple-600",
+                borderColor: "border-purple-200",
+                content: "由【蔣中正】擔任國民革命軍總司令，從【廣州】出發，由南往北武力掃滅各大小軍閥。"
+            },
+            {
+                year: "1927",
+                title: "清黨與寧漢分裂",
+                category: "kmt-ccp",
+                icon: "fa-bolt",
+                color: "bg-blue-600",
+                textColor: "text-blue-700",
+                borderColor: "border-blue-200",
+                content: "因共黨滲透，蔣中正發動【清黨】屠殺共產黨員（【國共第一次分裂】）。引發【寧漢分裂】：武漢(汪精衛/容共) v.s. 南京(蔣中正/反共)。最終汪轉為反共，蔣中正掌權。"
+            },
+            {
+                year: "1928",
+                title: "完成統一與進入訓政",
+                category: "domestic",
+                icon: "fa-check-circle",
+                color: "bg-purple-600",
+                textColor: "text-purple-700",
+                borderColor: "border-purple-200",
+                content: "發生五三慘案(日本阻撓)與【皇姑屯事件】(張作霖被炸死)。年底少帥【張學良】【東北易幟】歸順國民政府。定都【南京】，進入【以黨領政】的【訓政時期】(1928-1947)。"
+            },
+            {
+                year: "1928 - 1937",
+                title: "黃金十年 (十年建設)",
+                category: "domestic",
+                icon: "fa-hammer",
+                color: "bg-indigo-500",
+                textColor: "text-indigo-600",
+                borderColor: "border-indigo-200",
+                content: "財政：【廢兩改元】、發行【法幣】(1935)、收回【關稅自主權】。<br>教育：廣設學校，【晏陽初】推動平民教育。<br>交通：發展鐵公路與【航空業】。奠定抗日基礎。"
+            },
+            {
+                year: "1929",
+                title: "經濟大恐慌",
+                category: "intl",
+                icon: "fa-chart-line",
+                color: "bg-emerald-600",
+                textColor: "text-emerald-700",
+                borderColor: "border-emerald-200",
+                content: "一戰後爆發全球【經濟大恐慌】。日本為緩解國內經濟壓力與社會動盪，人民寄望軍人掌權，【軍國主義】崛起，走向侵略中國。"
+            },
+            {
+                year: "1930 - 1935",
+                title: "剿共戰爭與二萬五千里長征",
+                category: "kmt-ccp",
+                icon: "fa-route",
+                color: "bg-red-600",
+                textColor: "text-red-700",
+                borderColor: "border-red-200",
+                content: "國府圍剿江西中共根據地。共軍被迫展開【兩萬五千里長征】逃至【陝西延安】。此間【毛澤東】攬權，確立發展鄉村農民武裝組織的路線。"
+            },
+            {
+                year: "1931/9/18",
+                title: "九一八事變",
+                category: "war",
+                icon: "fa-fire",
+                color: "bg-orange-500",
+                textColor: "text-orange-600",
+                borderColor: "border-orange-200",
+                content: "日軍藉口柳條湖事件出兵【東北瀋陽】。蔣中正因未完成備戰，指示張學良採【不抵抗政策】（先安內後攘外），導致東北全境淪陷。"
+            },
+            {
+                year: "1932",
+                title: "滿洲國成立與一二八事變",
+                category: "war",
+                icon: "fa-chess-king",
+                color: "bg-orange-500",
+                textColor: "text-orange-600",
+                borderColor: "border-orange-200",
+                content: "日本於東北扶植清朝遜帝溥儀成立【滿洲國】(傀儡政權，首都長春)。為轉移國際對滿洲國的聲討，日軍發動【一二八事變】進佔上海。"
+            },
+            {
+                year: "1936/12",
+                title: "西安事變",
+                category: "kmt-ccp",
+                icon: "fa-user-lock",
+                color: "bg-blue-600",
+                textColor: "text-blue-700",
+                borderColor: "border-blue-200",
+                content: "負責剿共的【張學良】、【楊虎城】發動兵變挾持蔣中正。要求【停止內戰，一致抗日】。促成【國共第二次合作】，整合內部陣線，但也迫使日本加速侵略。"
+            },
+            {
+                year: "1937/7/7",
+                title: "盧溝橋事變 (七七事變)",
+                category: "war",
+                icon: "fa-bomb",
+                color: "bg-red-600",
+                textColor: "text-red-700",
+                borderColor: "border-red-200",
+                content: "日軍於【北平】近郊演習稱士兵失蹤，要求入城搜索遭拒。中日戰爭全面爆發，但雙方初期皆【未正式宣戰】。日本妄想【三月亡華】。"
+            },
+            {
+                year: "1937",
+                title: "淞滬會戰與南京大屠殺",
+                category: "war",
+                icon: "fa-skull-crossbones",
+                color: "bg-red-700",
+                textColor: "text-red-800",
+                borderColor: "border-red-300",
+                content: "國軍死守上海三個月粉碎日軍速亡計畫。首都淪陷後發生慘絕人寰的【南京大屠殺】。政府將首都西遷至【重慶】，以【大後方】實施【以空間換取時間】的長期抗戰。"
+            },
+            {
+                year: "1941/12",
+                title: "珍珠港事變",
+                category: "intl",
+                icon: "fa-fighter-jet",
+                color: "bg-emerald-600",
+                textColor: "text-emerald-700",
+                borderColor: "border-emerald-200",
+                content: "因美國實施【石油禁運】，日本偷襲夏威夷珍珠港。【太平洋戰爭】爆發，美國、中國加入同盟國並正式宣戰，二戰的歐洲與亞洲戰場正式合流。"
+            },
+            {
+                year: "1943",
+                title: "平等新約與開羅會議",
+                category: "intl",
+                icon: "fa-file-signature",
+                color: "bg-teal-600",
+                textColor: "text-teal-700",
+                borderColor: "border-teal-200",
+                content: "英美與中國簽訂【平等新約】。隨後中(蔣中正)、美(羅斯福)、英(邱吉爾)舉行【開羅會議】，發表【開羅宣言】要求日本戰後將【東北、台灣、澎湖】交還中華民國。"
+            },
+            {
+                year: "1945/2",
+                title: "雅爾達會議",
+                category: "intl",
+                icon: "fa-user-secret",
+                color: "bg-teal-700",
+                textColor: "text-teal-800",
+                borderColor: "border-teal-300",
+                content: "蘇(史達林)、美、英三巨頭簽訂【雅爾達密約】。為換取蘇聯對日宣戰，美英背著中國，給予蘇聯在【中國東北】的特權並維持外蒙現狀，嚴重犧牲中國主權。"
+            },
+            {
+                year: "1945/8",
+                title: "日本投降與二戰結束",
+                category: "war",
+                icon: "fa-flag-checkered",
+                color: "bg-orange-600",
+                textColor: "text-orange-700",
+                borderColor: "border-orange-200",
+                content: "美國投擲兩顆【原子彈】(廣島、長崎)，蘇聯出兵東北。8/15【日本無條件投降】，【八年抗戰】結束。同年【聯合國】成立，中華民國成為安理會常任理事國。"
+            },
+            {
+                year: "1945 - 1947",
+                title: "重慶會談與內戰爆發",
+                category: "kmt-ccp",
+                icon: "fa-people-arrows",
+                color: "bg-red-600",
+                textColor: "text-red-700",
+                borderColor: "border-red-200",
+                content: "國共爭奪受降權。美國馬歇爾調停失敗。共產黨獲蘇聯暗中移交日軍武器，實力大增。1947年國民政府宣布「動員戡亂」，內戰全面爆發。"
+            },
+            {
+                year: "1947 - 1948",
+                title: "行憲與動員戡亂並行",
+                category: "domestic",
+                icon: "fa-balance-scale",
+                color: "bg-purple-600",
+                textColor: "text-purple-700",
+                borderColor: "border-purple-200",
+                content: "1947年底實施《【中華民國憲法】》，進入憲政。1948年【蔣中正】就任首任總統。但為因應內戰制定《【動員戡亂時期臨時條款】》，總統權限無限擴張，憲政難以落實。"
+            },
+            {
+                year: "1948 - 1949",
+                title: "國民黨崩潰與政府遷臺",
+                category: "kmt-ccp",
+                icon: "fa-ship",
+                color: "bg-blue-700",
+                textColor: "text-blue-800",
+                borderColor: "border-blue-300",
+                content: "軍事：國軍三大會戰全敗，美國發表白皮書停止軍援。<br>經濟：濫發貨幣導致【法幣】、【金圓券】急劇貶值崩盤。<br>1949年10月1日中共於北京建政。12月中華民國政府正式遷至【台北】，形成兩岸分治。"
+            }
+        ];
+
+        // 高光關鍵字處理函數
+        function highlightKeywords(text) {
+            // 使用正規表達式匹配【】內的文字並加上 span
+            return text.replace(/【(.*?)】/g, '<span class="highlight">【$1】</span>');
+        }
+
+        // 渲染時間軸
+        function renderTimeline(filter = 'all') {
+            const container = document.getElementById('timeline-container');
+            container.innerHTML = '';
+
+            let delay = 0;
+            let alignLeft = true;
+
+            timelineData.forEach((item, index) => {
+                if (filter !== 'all' && item.category !== filter) return;
+
+                const alignmentClass = alignLeft ? 'md:flex-row-reverse' : 'md:flex-row';
+                const textAlignment = alignLeft ? 'md:text-right md:pr-12' : 'md:text-left md:pl-12';
+                const nodePosition = alignLeft ? 'md:right-0 md:translate-x-1/2' : 'md:left-0 md:-translate-x-1/2';
+                const paddingClass = alignLeft ? 'pr-8 md:pr-0 md:pl-12' : 'pl-8 md:pl-0 md:pr-12';
+
+                const html = `
+                    <div class="relative flex flex-col md:flex-row items-center mb-12 w-full timeline-item" style="transition-delay: ${delay}ms">
+                        
+                        <!-- Timeline Line (Mobile override) -->
+                        <div class="absolute left-4 md:left-1/2 h-full w-1 bg-slate-200 transform -translate-x-1/2 -z-10 block md:hidden"></div>
+                        
+                        <!-- Content Box (Left or Right on Desktop) -->
+                        <div class="w-full md:w-1/2 pl-12 pr-4 md:px-0 ${alignLeft ? 'md:pr-12' : 'md:pl-12'}">
+                            <div class="bg-white rounded-xl shadow-lg border-t-4 ${item.borderColor.replace('border-', 'border-t-')} p-6 hover:shadow-xl transition relative overflow-hidden group">
+                                <div class="absolute top-0 right-0 w-16 h-16 ${item.color} opacity-10 rounded-bl-full transform group-hover:scale-125 transition duration-300"></div>
+                                <h3 class="text-xl font-black mb-1 ${item.textColor}">${item.title}</h3>
+                                <p class="text-sm font-bold text-slate-500 mb-3 tracking-wider bg-slate-100 inline-block px-2 py-1 rounded"><i class="far fa-clock mr-1"></i>${item.year}</p>
+                                <p class="text-slate-700 leading-relaxed">${highlightKeywords(item.content)}</p>
+                            </div>
+                        </div>
+
+                        <!-- Center Node -->
+                        <div class="absolute left-4 md:left-1/2 transform -translate-x-1/2 w-10 h-10 rounded-full border-4 border-white ${item.color} shadow-md flex items-center justify-center z-10 text-white shadow-lg">
+                            <i class="fas ${item.icon} text-sm"></i>
+                        </div>
+                    </div>
+                `;
+                
+                container.innerHTML += html;
+                delay += 100; // 錯開動畫時間
+                alignLeft = !alignLeft; // 交替左右
+            });
+
+            // 觸發進場動畫
+            setTimeout(() => {
+                const items = document.querySelectorAll('.timeline-item');
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                items.forEach(item => observer.observe(item));
+            }, 50);
+        }
+
+        // 篩選按鈕邏輯
+        function filterTimeline(category) {
+            // 更新按鈕樣式
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.dataset.category === category) {
+                    btn.classList.add('ring-2', 'ring-offset-2', 'ring-slate-400');
+                    btn.style.transform = "scale(1.05)";
+                } else {
+                    btn.classList.remove('ring-2', 'ring-offset-2', 'ring-slate-400');
+                    btn.style.transform = "scale(1)";
+                }
+            });
+
+            // 重新渲染
+            renderTimeline(category);
+        }
+
+        // 初始渲染
+        document.addEventListener('DOMContentLoaded', () => {
+            filterTimeline('all');
+        });
+
+    </script>
+</body>
+</html>
