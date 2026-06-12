@@ -20,18 +20,18 @@
 
     <style>
         :root {
-            /* 配色系統 - 粉嫩可愛風格 */
-            --primary-color: #ff4b6e;   
-            --secondary-color: #ffebee; 
-            --bg-color: #ffffff;        
-            --text-color: #4a4a4a;      
-            --accent-color: #ff8a80;    
-            --correct-color: #4ade80;   
-            --wrong-color: #fb7185;     
-            --locked-color: #f1f5f9;    
-            --favorite-color: #f472b6;  
-            --quick-mode-color: #ff4b6e; 
-            --quick-mode-bg: #fffcfd;    
+            /* 配色系統 - 根據 image_0a3d05.png 重新設計的粉嫩可愛風格 */
+            --primary-color: #ff4b6e;   /* 主題粉紅/紅色 (標題與按鈕) */
+            --secondary-color: #ffebee; /* 淡粉背景 (標籤與框線) */
+            --bg-color: #ffffff;        /* 純白 */
+            --text-color: #4a4a4a;      /* 墨黑 (內文) */
+            --accent-color: #ff8a80;    /* 點綴粉 */
+            --correct-color: #4ade80;   /* 正確綠 */
+            --wrong-color: #fb7185;     /* 錯誤紅 */
+            --locked-color: #f1f5f9;    /* 封鎖灰 */
+            --favorite-color: #f472b6;  /* 典藏粉 */
+            --quick-mode-color: #ff4b6e; /* 統一使用主題粉 */
+            --quick-mode-bg: #fffcfd;    /* 超淺粉白背景 */
             --header-height: 40px; 
         }
 
@@ -41,6 +41,7 @@
             padding: calc(var(--header-height) + 40px) 20px 40px 20px; 
             background-color: var(--bg-color); 
             color: var(--text-color);
+            /* 點點圖案背景 (藍色與粉色交錯) */
             background-image: 
                 radial-gradient(#e1f5fe 2px, transparent 2px),
                 radial-gradient(#fce4ec 2px, transparent 2px);
@@ -57,7 +58,7 @@
         h1, h2, h3 { text-align: center; color: var(--text-color); }
         h1 { 
             color: var(--primary-color); 
-            font-size: 2.6em; /* 加大標題 */
+            font-size: 2.2em; 
             font-weight: 900; 
             margin-bottom: 5px; 
             text-shadow: none; 
@@ -75,7 +76,7 @@
             display: flex; align-items: center; gap: 6px;
             background: #ffffff; padding: 6px 14px;
             border-radius: 50px; 
-            font-size: 0.9em; color: #666;
+            font-size: 0.85em; color: #666;
             border: 1px solid #fce4ec;
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
@@ -95,62 +96,60 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.04); 
             border: 2px dashed #ffd1d9;
             width: 100%;
+            max-width: 460px; /* 貼近截圖中偏窄高的卡片比例 */
             margin: 0 auto 20px auto;
             box-sizing: border-box;
             position: relative;
         }
-        /* 針對 iPad 調整最大寬度 */
-        #welcome-screen { max-width: 600px; padding: 50px 40px; }
-        #level-screen { max-width: 800px; width: 95%; }
-        /* 擴大瀑布流刷題區，縮小留白 */
-        #waterfall-screen { max-width: 1000px; width: 96%; padding: 25px 20px; } 
+        #level-screen { max-width: 600px; }
+        #waterfall-screen { max-width: 800px; }
 
         /* --- Welcome Screen 專屬字體與排版 --- */
         .pill-subtitle {
             display: inline-block;
             background: var(--secondary-color);
             color: #d81b60;
-            padding: 8px 24px; /* 加大 */
+            padding: 6px 18px;
             border-radius: 50px;
-            font-size: 1.1em; /* 加大 */
+            font-size: 0.9em;
             font-weight: bold;
             margin: 15px 0;
         }
 
-        .avatar-selection { display: flex; justify-content: center; gap: 15px; margin: 15px 0; }
+        /* 隱藏預設頭像列，使其變小且精緻 */
+        .avatar-selection { display: flex; justify-content: center; gap: 10px; margin: 10px 0; }
         .avatar-option {
-            width: 48px; height: 48px; border-radius: 50%; border: 3px solid transparent; cursor: pointer;
+            width: 40px; height: 40px; border-radius: 50%; border: 2px solid transparent; cursor: pointer;
             transition: 0.3s; object-fit: cover; background: #FFF; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .avatar-option.selected { border-color: var(--primary-color); transform: scale(1.1); }
         
-        /* --- 優化後的快速登入區域 (主要按鈕) --- */
+        /* 雲端登入列表 */
         .quick-login-area { 
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 15px; 
-            max-height: 200px; overflow-y: auto; padding: 5px; 
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 10px; 
+            max-height: 120px; overflow-y: auto; padding: 5px; 
             border: none; background: transparent;
         }
         .user-tag { 
-            background: linear-gradient(135deg, #ff8a80 0%, #ff5252 100%);
-            border: none; padding: 14px 28px; 
-            border-radius: 50px; cursor: pointer; display: flex; align-items: center; gap: 8px; 
-            font-size: 1.2em; transition: 0.2s; box-shadow: 0 4px 12px rgba(255, 82, 82, 0.3);
-            color: #fff; font-weight: bold;
+            background: #fff; border: 1px solid #f0f0f0; padding: 6px 16px; 
+            border-radius: 50px; cursor: pointer; display: flex; align-items: center; gap: 6px; 
+            font-size: 0.85em; transition: 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            color: #666; font-weight: bold;
         }
-        .user-tag:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(255, 82, 82, 0.4); }
-        .user-tag img { display: none; } 
+        .user-tag:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        .user-tag img { display: none; } /* 隱藏小頭像以符合照片極簡風 */
         
-        .delete-user { font-weight: bold; color: rgba(255,255,255,0.7); margin-left: 8px; padding: 2px 6px; border-radius: 50%; font-size: 0.9em;}
-        .delete-user:hover { color: #fff; background: rgba(0,0,0,0.1); }
+        .delete-user { font-weight: bold; color: #ccc; margin-left: 4px;}
+        .delete-user:hover { color: var(--wrong-color); }
         
         input[type="text"] { 
-            padding: 16px; /* 加大 */
-            font-size: 1.2em; /* 加大 */
+            padding: 14px; 
+            font-size: 1em; 
             border: 2px solid var(--secondary-color); 
             border-radius: 50px; 
             width: 85%; 
             text-align: center; 
-            margin: 10px 0;
+            margin: 5px 0;
             background: #ffffff;
             color: var(--text-color);
             transition: 0.2s;
@@ -167,33 +166,33 @@
         }
         
         .dashboard-speed-zone {
-            flex: 1; background: #ffffff; border-radius: 20px; padding: 40px;
+            flex: 1; background: #ffffff; border-radius: 20px; padding: 30px;
             border: 2px dashed var(--secondary-color); display: flex; flex-direction: column; align-items: center;
             justify-content: center;
         }
-        .speed-title { color: var(--quick-mode-color); font-size: 1.8em; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;}
+        .speed-title { color: var(--quick-mode-color); font-size: 1.6em; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;}
         .speed-big-btn {
-            width: 80%; max-width: 450px; padding: 20px; border-radius: 50px; 
+            width: 80%; max-width: 400px; padding: 16px; border-radius: 50px; 
             background: linear-gradient(135deg, #ff8a80 0%, #ff5252 100%);
-            color: white; font-size: 1.5em; border: none; cursor: pointer; font-weight: bold;
+            color: white; font-size: 1.3em; border: none; cursor: pointer; font-weight: bold;
             box-shadow: 0 4px 12px rgba(255, 82, 82, 0.3); transition: 0.3s;
         }
         .speed-big-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(255, 82, 82, 0.4); }
 
         .dashboard-tools {
-            margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;
-            padding-top: 25px; border-top: 2px dashed #fce4ec;
+            margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+            padding-top: 20px; border-top: 2px dashed #fce4ec;
         }
         
         /* --- Button Styles --- */
-        .btn { padding: 12px 28px; border-radius: 50px; border: none; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: 0.3s; box-shadow: 0 4px 10px rgba(255, 94, 120, 0.2); color: #fff; background: var(--primary-color); display: inline-flex; align-items: center; gap: 5px; justify-content: center;}
+        .btn { padding: 10px 24px; border-radius: 50px; border: none; cursor: pointer; font-weight: bold; font-size: 1em; transition: 0.3s; box-shadow: 0 4px 10px rgba(255, 94, 120, 0.2); color: #fff; background: var(--primary-color); display: inline-flex; align-items: center; gap: 5px; justify-content: center;}
         .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(255, 94, 120, 0.3); }
         .btn-main {
             width: 85%;
             background: linear-gradient(135deg, #ff8a80 0%, #ff5252 100%);
             box-shadow: 0 4px 12px rgba(255, 82, 82, 0.3);
-            padding: 16px 24px; /* 加大 */
-            font-size: 1.3em; /* 加大 */
+            padding: 14px 20px;
+            font-size: 1.1em;
             margin-top: 10px;
         }
         .btn-red { background: var(--wrong-color); } 
@@ -204,16 +203,17 @@
         .btn-orange { background: #ffa726; color: #fff;} 
 
         /* --- Waterfall Quiz Mode (Quick Quiz) --- */
+        #waterfall-screen { display: none; }
         .waterfall-header {
             position: sticky; top: 10px; z-index: 99;
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
             padding: 15px 20px; border-radius: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin: -10px -10px 20px -10px; /* 縮小留白 */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin: -25px -25px 20px -25px;
             border: 2px dashed var(--secondary-color);
             display: flex; justify-content: space-between; align-items: center;
         }
-        .waterfall-title { font-size: 1.3em; font-weight: bold; color: var(--quick-mode-color); display: flex; align-items: center; gap: 8px; }
-        .waterfall-stats { font-size: 1.2em; font-weight: bold; color: #666; }
+        .waterfall-title { font-size: 1.2em; font-weight: bold; color: var(--quick-mode-color); display: flex; align-items: center; gap: 8px; }
+        .waterfall-stats { font-size: 1.1em; font-weight: bold; color: #666; }
         
         .waterfall-card {
             background: #fff; border-radius: 20px; padding: 25px; margin-bottom: 25px;
@@ -228,17 +228,16 @@
         .action-icon.trash:hover { color: var(--wrong-color); }
 
         .wf-question-text { 
-            font-size: 1.5em; /* 放大題目字體 */
-            font-weight: bold; margin-bottom: 20px; 
+            font-size: 1.4em; font-weight: bold; margin-bottom: 20px; 
             padding-right: 80px; line-height: 1.5; color: var(--text-color); 
         }
         .wf-q-badge { display: inline-block; background: var(--secondary-color); color: var(--primary-color); padding: 4px 12px; border-radius: 50px; font-size: 0.8em; font-weight: bold; margin-right: 8px; vertical-align: middle; }
         .wf-img { max-width: 100%; max-height: 400px; display: block; margin: 10px auto; border-radius: 12px; border: 1px solid #eee; }
         
-        .wf-options { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        .wf-options { display: grid; grid-template-columns: 1fr; gap: 10px; }
         .wf-opt-btn {
-            padding: 16px; border: 2px solid #f8fafc; background: #f8fafc; border-radius: 16px; /* 加大選項 */
-            text-align: left; cursor: pointer; font-size: 1.3em; transition: 0.2s; color: var(--text-color); font-weight: 500;
+            padding: 14px; border: 2px solid #f8fafc; background: #f8fafc; border-radius: 16px;
+            text-align: left; cursor: pointer; font-size: 1.2em; transition: 0.2s; color: var(--text-color); font-weight: 500;
         }
         .wf-opt-btn:hover:not(:disabled) { border-color: var(--secondary-color); background: #fff; }
         .wf-opt-btn.correct { background: #f0fdf4; border-color: var(--correct-color); color: #166534; font-weight: bold;}
@@ -247,7 +246,7 @@
         .wf-explanation {
             margin-top: 20px; background: #fffafb; padding: 20px; 
             border-radius: 16px; border: 1px solid #fce4ec;
-            font-size: 1.2em; color: #666; display: none;
+            font-size: 1.1em; color: #666; display: none;
         }
 
         /* Animations */
@@ -257,7 +256,7 @@
         @media (max-width: 768px) {
             #level-screen-content { flex-direction: column; }
             .waterfall-header { flex-direction: column; align-items: flex-start; gap: 8px; top: 10px; margin-top: -15px;} 
-            .waterfall-stats { font-size: 1em; align-self: flex-end; }
+            .waterfall-stats { font-size: 0.9em; align-self: flex-end; }
             .card-actions { top: 10px; right: 10px; }
             body { padding-top: 60px; }
             
@@ -268,7 +267,7 @@
 </head>
 <body>
 
-    <!-- 頂部狀態列 -->
+    <!-- 頂部狀態列 (僅保留連線狀態，改為右上角小標籤) -->
     <div id="top-status-bar">
         <div id="cloud-status" class="status-indicator">
             <div id="status-dot" class="status-dot"></div>
@@ -280,17 +279,17 @@
     <div id="welcome-screen" class="container-box fade-in">
         <!-- 頂部的主視覺小頭像 -->
         <div style="text-align: center; margin-bottom: 5px;">
-            <img src="History4-L4-images/Chris.png" id="main-cute-avatar" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; background: #ffebee; padding: 4px;">
+            <img src="History4-L4-images/Chris.png" id="main-cute-avatar" style="width: 55px; height: 55px; border-radius: 50%; object-fit: cover; background: #ffebee; padding: 4px;">
         </div>
 
         <h1 style="margin-top: 10px;">歷史第4冊<br>中日戰爭與內戰</h1>
-        <div style="font-size: 2em; text-align: center; margin: 10px;">🌈✨</div>
+        <div style="font-size: 1.8em; text-align: center; margin: 5px;">🌈✨</div>
         
         <div style="text-align: center;">
             <div class="pill-subtitle">準備參加歷史戰爭 💡</div>
         </div>
         
-        <div style="text-align:center; margin-top: 15px;">
+        <div style="text-align:center; margin-top: 10px;">
             <input type="text" id="username" placeholder="✍️ 點擊這裡輸入代號進入" />
         </div>
         
@@ -301,19 +300,19 @@
             <img src="History4-L4-images/kitty.png" class="avatar-option" onclick="selectAvatar('kitty.png', this); document.getElementById('main-cute-avatar').src=this.src;">
         </div>
 
-        <div style="text-align:center; margin-top: 15px;">
+        <div style="text-align:center; margin-top: 10px;">
             <button class="btn btn-main" onclick="loginAndStart()">進入學習 / 測驗 🚀</button>
         </div>
 
-        <div style="text-align: center; margin-top: 35px; color: #a0aab2; font-size: 1em; font-weight: bold;">
-            ☁️ 雲端快速登入 👥
+        <div style="text-align: center; margin-top: 25px; color: #a0aab2; font-size: 0.85em; font-weight: bold;">
+            ☁️ 雲端最近登入 👥
         </div>
         <div id="quick-login-area" class="quick-login-area">
-            <div style="color:#bbb; padding:10px; font-size: 1.1em;">資料載入中...</div>
+            <div style="color:#bbb; padding:10px; font-size: 0.9em;">資料載入中...</div>
         </div>
 
-        <div style="margin-top: 25px; text-align: center;">
-            <a href="index.html" class="btn btn-gray" style="text-decoration: none; padding: 10px 20px; font-size: 1em;">
+        <div style="margin-top: 15px; text-align: center;">
+            <a href="index.html" class="btn btn-gray" style="text-decoration: none; padding: 8px 16px; font-size: 0.85em;">
                 🏠 返回總部
             </a>
         </div>
@@ -321,21 +320,21 @@
 
     <!-- 儀表板 (Level Screen) -->
     <div id="level-screen" class="container-box fade-in" style="display: none;">
-        <div style="text-align: center; margin-bottom: 25px;">
-            <img id="user-avatar-display" src="" style="width:50px; height:50px; border-radius:50%; vertical-align:middle; border:2px solid #fff; box-shadow:0 2px 5px rgba(0,0,0,0.2);">
-            <span style="font-size: 1.4em; font-weight: bold; margin-left: 10px;">探險家：<span id="display-name" style="color:var(--primary-color);"></span></span>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img id="user-avatar-display" src="" style="width:40px; height:40px; border-radius:50%; vertical-align:middle; border:2px solid #fff; box-shadow:0 2px 5px rgba(0,0,0,0.2);">
+            <span style="font-size: 1.2em; font-weight: bold; margin-left: 10px;">探險家：<span id="display-name" style="color:var(--primary-color);"></span></span>
         </div>
 
         <div id="level-screen-content">
             <!-- 極速刷題區 -->
             <div class="dashboard-speed-zone">
                 <div class="speed-title">⚡ 歷史速讀區</div>
-                <p style="color:#666; font-size:1.2em; text-align:center; margin-bottom: 25px;">不分章節，瀑布流快速複習全部歷史題目</p>
+                <p style="color:#666; font-size:1.1em; text-align:center; margin-bottom: 20px;">不分章節，瀑布流快速複習全部歷史題目</p>
                 <button class="speed-big-btn" onclick="startWaterfallQuiz('speed')">🚀 開始探索</button>
             </div>
         </div>
 
-        <!-- 底部工具列 -->
+        <!-- 底部工具列 (移除了文物圖鑑與名人堂) -->
         <div class="dashboard-tools">
             <button id="btn-mistake" class="btn btn-red" onclick="startWaterfallQuiz('mistake')" style="display:none;">📕 錯題筆記 (<span id="mistake-count">0</span>)</button>
             <button id="btn-favorite" class="btn btn-pink" onclick="startWaterfallQuiz('favorite')" style="display:none;">⭐ 趨勢收藏 (<span id="favorite-count">0</span>)</button>
@@ -353,9 +352,9 @@
                 已答: <span id="wf-answered" style="color:var(--primary-color)">0</span> / <span id="wf-total">0</span>
                 &nbsp;|&nbsp; 得分: <span id="wf-score" style="color:var(--correct-color)">0</span>
             </div>
-            <div style="display:flex; gap: 8px;">
-                <button class="btn btn-orange btn-sm" style="padding: 8px 16px; font-size: 1em;" onclick="restartQuiz()">🔄 重新開始</button>
-                <button class="btn btn-gray btn-sm" style="padding: 8px 16px; font-size: 1em;" onclick="exitQuiz()">🏠 結束</button>
+            <div style="display:flex; gap: 5px;">
+                <button class="btn btn-orange btn-sm" onclick="restartQuiz()">🔄 重新開始</button>
+                <button class="btn btn-gray btn-sm" onclick="exitQuiz()">🏠 結束</button>
             </div>
         </div>
         
@@ -393,7 +392,7 @@
         let currentUserDocUnsubscribe = null;
         let globalUsersUnsubscribe = null;
 
-        // 全域資料快取 
+        // 全域資料快取 (移除了不必要的 quizHistory)
         window.currentUserData = {
             mistakeBank: [],
             favoriteBank: [],
@@ -583,12 +582,13 @@
         // ============================================
 
         let allQuestions = [];
-        const ITEMS_PER_PAGE = 20; 
+        const ITEMS_PER_PAGE = 20; // 即使不用關卡，也保留作為常數備用
         
+        // *** 關鍵修正：確保變數掛載到 window，讓 Module 讀得到 ***
         window.userName = ""; 
         window.currentAvatar = "Chris.png";
         
-        // 測驗狀態
+        // 測驗狀態 (僅保留瀑布流所需)
         let quizState = {
             mode: 'speed', 
             score: 0,
@@ -602,6 +602,7 @@
 
         // --- 初始化 ---
         document.addEventListener('DOMContentLoaded', () => {
+            // 內建預設題庫，避免因為沙盒環境抓不到 JSON 而報錯
             const fallbackQuestions = [
                 { id: "q1", question: "七七事變發生於哪一年？", options: ["A. 1931年", "B. 1937年", "C. 1945年", "D. 1949年"], answer: "B. 1937年", explanation: "1937年7月7日爆發盧溝橋事變，又稱七七事變。" },
                 { id: "q2", question: "八年抗戰期間，中華民國政府遷都至何處？", options: ["A. 南京", "B. 北京", "C. 重慶", "D. 廣州"], answer: "C. 重慶", explanation: "抗戰爆發後，國民政府西遷重慶作為陪都。" },
@@ -614,6 +615,7 @@
                 console.log(`Questions loaded: ${allQuestions.length}`);
             };
 
+            // 使用 try...catch 保護 fetch，防止 Blob URL 環境解析失敗
             try {
                 fetch('History4-L4-questions.json')
                     .then(res => {
@@ -636,7 +638,7 @@
         // ============================================
 
         function selectAvatar(img, el) {
-            window.currentAvatar = img; 
+            window.currentAvatar = img; // *** FIX ***
             document.querySelectorAll('.avatar-option').forEach(e => e.classList.remove('selected'));
             el.classList.add('selected');
         }
@@ -645,8 +647,9 @@
             const name = document.getElementById('username').value.trim();
             if(!name) return alert('請輸入探險家代號');
             
-            window.userName = name; 
+            window.userName = name; // *** FIX: Set to window so module can see it ***
             
+            // 這些函式現在是 window 的方法
             if(window.saveUserGlobal) await window.saveUserGlobal(); 
             if(window.listenToCurrentUser) window.listenToCurrentUser(window.userName);
             
@@ -661,28 +664,30 @@
             const container = document.getElementById('quick-login-area');
             if (!container) return;
             if (users.length === 0) {
-                container.innerHTML = `<div style="padding:20px; color:#bbb; width:100%; text-align:center; font-size:1.1em;">尚無探險家紀錄，歡迎加入！</div>`;
+                container.innerHTML = `<div style="padding:20px; color:#666; width:100%; text-align:center;">尚無探險家紀錄，歡迎加入！</div>`;
                 return;
             }
             
             container.innerHTML = users.map(u => `
-                <button class="user-tag" onclick="quickLogin('${u.name}', '${u.avatar}')">
-                    ${u.name}
-                    <span class="delete-user" onclick="event.stopPropagation();deleteUser('${u.name}')">✕</span>
-                </button>
+                <div class="user-tag" onclick="quickLogin('${u.name}', '${u.avatar}')">
+                    <img src="History4-L4-images/${u.avatar}" style="width:20px;height:20px;border-radius:50%;">${u.name}
+                    <span class="delete-user" onclick="event.stopPropagation();deleteUser('${u.name}')">×</span>
+                </div>
             `).join('');
         }
 
         function quickLogin(name, av) {
             document.getElementById('username').value = name;
-            window.userName = name; 
-            window.currentAvatar = av; 
+            window.userName = name; // *** FIX ***
+            window.currentAvatar = av; // *** FIX ***
             loginAndStart();
         }
 
         function deleteUser(name) {
             if(window.deleteUser) window.deleteUser(name);
         }
+
+        // 接續一般 JS 邏輯
 
         function goToDashboard() {
             hideAllScreens();
@@ -934,6 +939,7 @@
 
         function exitQuiz() {
             if(confirm("確定要離開速讀區？(系統會自動儲存目前的進度)")) {
+                // 原本會記錄分數歷史，如果只需要保留進度，則直接回首頁
                 goToDashboard();
             }
         }
