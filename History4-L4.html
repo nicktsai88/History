@@ -211,9 +211,49 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin: -10px -10px 20px -10px; /* 縮小留白 */
             border: 2px dashed var(--secondary-color);
             display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; /* 支援平板排版折行 */
         }
         .waterfall-title { font-size: 1.3em; font-weight: bold; color: var(--quick-mode-color); display: flex; align-items: center; gap: 8px; }
-        .waterfall-stats { font-size: 1.2em; font-weight: bold; color: #666; }
+        
+        /* 升級版：視覺化統計圖表容器 */
+        .waterfall-stats-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+            max-width: 450px;
+            margin: 0 20px;
+        }
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .stat-badge {
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.95em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            justify-content: center;
+        }
+        .stat-badge.correct { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+        .stat-badge.wrong { background: #fff1f2; color: #9f1239; border: 1px solid #fecdd3; }
+        .stat-badge.remaining { background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; }
+
+        .stats-progress-bar {
+            height: 10px;
+            background: #f1f5f9;
+            border-radius: 50px;
+            overflow: hidden;
+            display: flex;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .progress-fill.correct { background: var(--correct-color); transition: width 0.4s ease; }
+        .progress-fill.wrong { background: var(--wrong-color); transition: width 0.4s ease; }
         
         .waterfall-card {
             background: #fff; border-radius: 20px; padding: 25px; margin-bottom: 25px;
@@ -256,8 +296,10 @@
         /* RWD */
         @media (max-width: 768px) {
             #level-screen-content { flex-direction: column; }
-            .waterfall-header { flex-direction: column; align-items: flex-start; gap: 8px; top: 10px; margin-top: -15px;} 
-            .waterfall-stats { font-size: 1em; align-self: flex-end; }
+            .waterfall-header { flex-direction: column; align-items: stretch; gap: 12px; top: 10px; margin-top: -15px;} 
+            .waterfall-title { align-self: center; }
+            .waterfall-stats-container { margin: 5px 0; max-width: 100%; width: 100%; }
+            .waterfall-header > div:last-child { justify-content: center; }
             .card-actions { top: 10px; right: 10px; }
             body { padding-top: 60px; }
             
@@ -344,16 +386,26 @@
     </div>
 
     <!-- 瀑布流刷題介面 (Waterfall) -->
-    <div id="waterfall-screen" class="container-box fade-in">
+    <div id="waterfall-screen" class="container-box fade-in" style="display: none;">
         <div class="waterfall-header">
             <div class="waterfall-title">
                 <span id="wf-mode-icon">⚡</span> <span id="wf-mode-title">歷史速讀</span>
             </div>
-            <div class="waterfall-stats">
-                已答: <span id="wf-answered" style="color:var(--primary-color)">0</span> / <span id="wf-total">0</span>
-                &nbsp;|&nbsp; 得分: <span id="wf-score" style="color:var(--correct-color)">0</span>
+            
+            <!-- 升級版圖像化統計儀表 -->
+            <div class="waterfall-stats-container">
+                <div class="stats-row">
+                    <span class="stat-badge correct">✅ 答對 <span id="wf-correct">0</span></span>
+                    <span class="stat-badge wrong">❌ 答錯 <span id="wf-wrong">0</span></span>
+                    <span class="stat-badge remaining">📝 剩餘 <span id="wf-remaining">0</span></span>
+                </div>
+                <div class="stats-progress-bar">
+                    <div id="wf-progress-correct" class="progress-fill correct" style="width: 0%"></div>
+                    <div id="wf-progress-wrong" class="progress-fill wrong" style="width: 0%"></div>
+                </div>
             </div>
-            <div style="display:flex; gap: 8px;">
+
+            <div style="display:flex; gap: 8px; justify-content: flex-end;">
                 <button class="btn btn-orange btn-sm" style="padding: 8px 16px; font-size: 1em;" onclick="restartQuiz()">🔄 重新開始</button>
                 <button class="btn btn-gray btn-sm" style="padding: 8px 16px; font-size: 1em;" onclick="exitQuiz()">🏠 結束</button>
             </div>
@@ -840,18 +892,30 @@
             }
         }
 
-        // 掛載到 window 以供模組呼叫
+        // 掛載到 window 以供模組呼叫，更新視覺化統計儀表板
         window.updateWaterfallStats = function() {
             if (!quizState || !quizState.locked) return;
             const answered = Object.keys(quizState.locked).length;
             const total = quizState.qIds.length;
-            const scoreEl = document.getElementById('wf-score');
-            const ansEl = document.getElementById('wf-answered');
-            const totalEl = document.getElementById('wf-total');
+            const correct = quizState.score;
+            const wrong = answered - correct;
+            const remaining = total - answered;
             
-            if(scoreEl) scoreEl.innerText = quizState.score;
-            if(ansEl) ansEl.innerText = answered;
-            if(totalEl) totalEl.innerText = total;
+            const correctEl = document.getElementById('wf-correct');
+            const wrongEl = document.getElementById('wf-wrong');
+            const remainingEl = document.getElementById('wf-remaining');
+            
+            if(correctEl) correctEl.innerText = correct;
+            if(wrongEl) wrongEl.innerText = wrong;
+            if(remainingEl) remainingEl.innerText = remaining;
+
+            const progressCorrect = document.getElementById('wf-progress-correct');
+            const progressWrong = document.getElementById('wf-progress-wrong');
+
+            if (total > 0) {
+                if(progressCorrect) progressCorrect.style.width = (correct / total * 100) + '%';
+                if(progressWrong) progressWrong.style.width = (wrong / total * 100) + '%';
+            }
         }
 
         function addToMistake(id) {
